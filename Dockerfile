@@ -30,7 +30,7 @@ RUN apt-get -y update && \
     sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     locale-gen && \
     \
-    useradd -M $BUILD_USER && \
+    useradd -M -d /workspace $BUILD_USER && \
     mkdir -p /workspace && chown -R $BUILD_USER /workspace && \
     \
     echo umask 0022 >>/etc/bash.bashrc && \
