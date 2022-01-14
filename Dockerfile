@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-ARG FREETZ_HOME=/freetz
+ARG BUILD_USER=builduser
 
 # Configure Timezone
 ### ENV TZ=Europe/Berlin
@@ -23,23 +23,22 @@ RUN apt-get -y update && \
                lib32ncurses5-dev gcc-multilib lib32stdc++6 libglib2.0-dev \
                sqlite3 libxml2-dev cpio \
                \
+               gosu \
+               \
                iproute2 ncftp iputils-ping net-tools && \
     \
     sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     locale-gen && \
     \
-    useradd freetz -m -d $FREETZ_HOME && \
-    mkdir -p $FREETZ_HOME/images /patches && \
-    chown -R freetz $FREETZ_HOME /patches && \
+    useradd -M $BUILD_USER && \
+    mkdir -p /workspace && chown -R $BUILD_USER /workspace && \
     \
-    echo umask 0022 >>$FREETZ_HOME/.bashrc && \
+    echo umask 0022 >>/etc/bash.bashrc && \
     \
     \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR $FREETZ_HOME
-
-USER freetz
-VOLUME $FREETZ_HOME/images
-ENTRYPOINT [""]
+WORKDIR /workspace
+ENV BUILD_USER=$BUILD_USER
+ENTRYPOINT usermod -u $(stat -c "%u" /workspace) $BUILD_USER && gosu $BUILD_USER bash "$@"
 
