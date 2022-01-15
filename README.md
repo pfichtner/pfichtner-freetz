@@ -6,6 +6,12 @@ This is my version of a [Freetz(-NG)](https://github.com/Freetz-NG/freetz-ng) bu
 
 To do this, I add the directory with the checked out repository as a volume into the container and then execute the build there: 
 ```
-docker run --rm -v $PWD:/workspace pfichtner/freetz /bin/bash -c make oldconfig && make
+docker run --rm -v $PWD:/workspace pfichtner/freetz /bin/bash -c "make menuconfig && make"
 ```
 (if you don't checkout Freetz(-NG) to the current directory replace $PWD with the path to the checked out repository)
+
+
+Of course in my CI environment I don't want to do ```menuconfig``` since it's a fully automated build. I use ```oldconfig``` here: 
+```
+docker run --rm -v $PWD:/workspace pfichtner/freetz /bin/bash -c "make oldconfig && make"
+```
