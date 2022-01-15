@@ -40,5 +40,6 @@ RUN apt-get -y update && \
 
 WORKDIR /workspace
 ENV BUILD_USER=$BUILD_USER
-ENTRYPOINT usermod -u $(stat -c "%u" /workspace) $BUILD_USER && gosu $BUILD_USER bash "$@"
+ADD entrypoint.sh /usr/local/bin
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
