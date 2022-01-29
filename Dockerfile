@@ -19,7 +19,7 @@ RUN apt-get -y update && \
                zlib1g-dev flex bison patch texinfo tofrodos gettext pkg-config \
                ecj fastjar perl libstring-crc32-perl ruby gawk python \
 	       bsdmainutils sudo locales \
-               libusb-dev unzip intltool libacl1-dev libcap-dev libc6-dev-i386 \
+               libusb-dev unzip sharutils intltool libacl1-dev libcap-dev libc6-dev-i386 \
                lib32ncurses5-dev gcc-multilib lib32stdc++6 libglib2.0-dev \
                sqlite3 libxml2-dev cpio \
                \
