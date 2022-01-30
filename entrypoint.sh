@@ -1,10 +1,6 @@
 #!/bin/sh -e
 
 UID=`stat -c "%u" /workspace`
-if [ $UID -ne 0 -a $UID -ne `id -u $BUILD_USER` ]; then
-	usermod -u $UID $BUILD_USER
-	gosu $BUILD_USER "$@"
-else
-	exec "$@"
-fi
+[ $UID -ne 0 -a $UID -ne `id -u $BUILD_USER` ] && usermod -u $UID $BUILD_USER
+gosu $BUILD_USER "$@"
 
