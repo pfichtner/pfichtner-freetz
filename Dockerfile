@@ -18,7 +18,7 @@ RUN apt-get -y update && \
                libzstd-dev cmake lib32z1-dev unar inkscape imagemagick \
                subversion git bc wget sudo ccache gcc g++ binutils autoconf automake \
                autopoint libtool-bin make bzip2 libncurses5-dev libreadline-dev \
-               zlib1g-dev flex bison patch texinfo tofrodos gettext pkg-config \
+               zlib1g-dev flex bison patch texinfo tofrodos gettext pkg-config sharutils \
                ecj fastjar perl libstring-crc32-perl ruby gawk python \
 	       bsdmainutils sudo locales \
                libusb-dev unzip intltool libacl1-dev libcap-dev libc6-dev-i386 \
@@ -41,13 +41,10 @@ RUN apt-get -y update && \
     echo umask 0022 >>/etc/bash.bashrc && \
     \
     patch -p0 </tmp/patch-cnf-autoinstall.patch && \
-    rm /tmp/patch-cnf-autoinstall.patch && \
-    mv /usr/bin/which /usr/bin/which.real
+    rm /tmp/patch-cnf-autoinstall.patch
 
     # do not purge package lists since we need them for autoinstalling via c-n-f
     # rm -rf /var/lib/apt/lists/*
-
-ADD which.replacement /usr/bin/which
 
 WORKDIR /workspace
 ENV BUILD_USER=$BUILD_USER
