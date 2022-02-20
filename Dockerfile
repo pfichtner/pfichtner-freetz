@@ -42,11 +42,12 @@ RUN apt-get -y update && \
     \
     patch -p0 </tmp/patch-cnf-autoinstall.patch && \
     rm /tmp/patch-cnf-autoinstall.patch && \
-    echo 'which() { /usr/bin/which "$@" && return 0 ; /usr/lib/command-not-found "$@"; /usr/bin/which "$@"; }' >>/etc/bash.bashrc
+    mv /usr/bin/which /usr/bin/which.real
 
     # do not purge package lists since we need them for autoinstalling via c-n-f
     # rm -rf /var/lib/apt/lists/*
 
+ADD which.replacement /usr/bin/which
 
 WORKDIR /workspace
 ENV BUILD_USER=$BUILD_USER
