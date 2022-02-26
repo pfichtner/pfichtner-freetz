@@ -38,8 +38,6 @@ RUN apt-get -y update && \
     useradd -M -G sudo -d /workspace $BUILD_USER && \
     mkdir -p /workspace && chown -R $BUILD_USER /workspace && \
     \
-    echo umask 0022 >>/etc/bash.bashrc && \
-    \
     patch -p0 </tmp/patch-cnf-autoinstall.patch && \
     rm /tmp/patch-cnf-autoinstall.patch
 
