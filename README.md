@@ -8,9 +8,16 @@ To do this, "cd" into the directory with the checked out [Freetz(-NG)-repository
 ```
 umask 0022 # needed fot the following clone
 git clone https://github.com/Freetz-NG/freetz-ng.git
-docker run --rm -v $PWD:/workspace pfichtner/freetz /bin/bash -c "make menuconfig && make"
+docker run --rm -it -v $PWD:/workspace pfichtner/freetz"
 ```
+Now you have a bash where you can work like your are in "a normal bash" like before, e.g. you now call call "make", "make menuconfig" or any command you like. 
+
 (if you don't checkout Freetz(-NG) to the current directory replace $PWD with the path to the checked out repository)
+
+If you dont' want an interactive shell (bash) but run command directly you can pass them using "bash -c"
+```
+docker run --rm -it -v $PWD:/workspace pfichtner/freetz /bin/bash -c "make menuconfig && make"
+```
 
 If you don't want or can't clone the Freetz(-NG) repository using your local machine you can do this also using inside docker container (but having the files outside of the container thus the machine you are running docker on)
 ```
