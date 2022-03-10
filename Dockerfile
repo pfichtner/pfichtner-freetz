@@ -39,7 +39,10 @@ RUN apt-get -y update && \
     mkdir -p /workspace && chown -R $BUILD_USER /workspace && \
     \
     patch -p0 </tmp/patch-cnf-autoinstall.patch && \
-    rm /tmp/patch-cnf-autoinstall.patch
+    rm /tmp/patch-cnf-autoinstall.patch && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers && \
+    # disable sudo hint without having any matching file in $HOME
+    sed -i 's/\[ \! -e \"\$HOME\/\.hushlogin\" \]/false/' /etc/bash.bashrc
 
     # do not purge package lists since we need them for autoinstalling via c-n-f
     # rm -rf /var/lib/apt/lists/*
