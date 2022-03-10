@@ -2,9 +2,9 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/pfichtner/freetz.svg?maxAge=604800)](https://hub.docker.com/r/pfichtner/freetz/)
 
 # pfichtner-freetz
-This is my version of a [Freetz(-NG)](https://github.com/Freetz-NG/freetz-ng) build environment. With this I build various images (3270, 3370, 7570,7390, 7490, 7590) with various configs in a CI environment. 
+This is my version of a [Freetz(-NG)](https://github.com/Freetz-NG/freetz-ng) build environment. With this I am running builds to create various images (3270, 3370, 7570,7390, 7490, 7590) with various configs in a CI environment. 
 
-To do this, I add the directory with the checked out repository as a volume into the container and then execute the build there: 
+To do this, "cd" into the directory with the checked out [Freetz(-NG)-repository](https://github.com/Freetz-NG/freetz-ng) and use the current directory ($PWD) as volume for the container and then execute the build there: 
 ```
 docker run --rm -v $PWD:/workspace pfichtner/freetz /bin/bash -c "make menuconfig && make"
 ```
