@@ -36,3 +36,10 @@ Of course in a CI environment you don't want to do ```menuconfig``` since it's a
 ```
 docker run --rm -v $PWD:/workspace pfichtner/freetz /bin/bash -c "make oldconfig && make"
 ```
+
+## Some hints if you're new to docker
+- You can use docker on most linux/unix systems (and many other systems like Windows, too)
+- Docker should be installable via the package manager (dkpg/apt, rpm, yum, ...) of your distribution
+- When installig docker initially on your machine, the user you want to use docker for has to be member of the docker group ("docker" on ubuntu, could differ in other distros), so add the user to the "docker" group
+- If you start a image (better said container) the first time, the image is pulled from the remote docker repository ("dockerhub"). This could take a while but after that the image is cached on you machine and has not to be downloaded again
+- If you want to update an image that already was downloaded you can use `docker pull <imagenamw`> to check for a newer image and update it
