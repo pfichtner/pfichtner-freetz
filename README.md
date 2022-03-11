@@ -29,6 +29,7 @@ docker run --rm -v ~/some-empty-directory-for-freetz:/workspace pfichtner/freetz
   /bin/bash -c "git clone https://github.com/Freetz-NG/freetz-ng.git . && make menuconfig && make"
 ```
 And here's a screencast for this
+
 <a href="http://pfichtner.github.io/pfichtner-freetz/checkout-in-container"><img src="https://pfichtner.github.io/pfichtner-freetz/asciinema-poster.png" /></a>
 
 Of course in a CI environment you don't want to do ```menuconfig``` since it's a fully automated build. That's where I am using ```oldconfig```: 
