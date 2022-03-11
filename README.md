@@ -10,14 +10,14 @@ umask 0022 # needed fot the following clone
 git clone https://github.com/Freetz-NG/freetz-ng.git
 docker run --rm -it -v $PWD:/workspace pfichtner/freetz"
 ```
-Now you have a bash where you can work like your are in "a normal bash" like before, e.g. you now call call "make", "make menuconfig" or any command you like. 
+**Now you have a shell (bash) where you can work like your are in "a normal bash" like before, e.g. you now call call `make` then `make menuconfig` or any other command you like.** If you want to leave this shell, just type `exit` as usual. 
 
 (if you don't checkout Freetz(-NG) to the current directory replace $PWD with the path to the checked out repository)
 
 Here's a screencast where Freetz(-NG) is checked out and menuconfig and make are run in the container
 <a href="http://pfichtner.github.io/pfichtner-freetz/checkout-on-host"><img src="https://pfichtner.github.io/pfichtner-freetz/asciinema-poster.png" /></a>
 
-If you dont' want an interactive shell (bash) but run command directly you can pass them using "bash -c"
+If you dont' want an interactive shell (bash) but run command directly you can pass them using `bash -c`
 ```
 docker run --rm -it -v $PWD:/workspace pfichtner/freetz /bin/bash -c "make menuconfig && make"
 ```
