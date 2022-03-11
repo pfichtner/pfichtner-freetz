@@ -6,7 +6,7 @@ This is my version of a [Freetz(-NG)](https://github.com/Freetz-NG/freetz-ng) bu
 
 To do this, "cd" into the directory with the checked out [Freetz(-NG)-repository](https://github.com/Freetz-NG/freetz-ng) and use the current directory ($PWD) as volume for the container and then execute the build there. Here comes the complete workflow:  
 ```
-umask 0022 # needed fot the following clone
+umask 0022 # necessary for the following clone
 git clone https://github.com/Freetz-NG/freetz-ng.git
 docker run --rm -it -v $PWD:/workspace pfichtner/freetz"
 ```
