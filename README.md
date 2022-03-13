@@ -6,10 +6,14 @@ This is my version of a [Freetz(-NG)](https://github.com/Freetz-NG/freetz-ng) bu
 
 To do this, "cd" into the directory with the checked out [Freetz(-NG)-repository](https://github.com/Freetz-NG/freetz-ng) and use the current directory ($PWD) as volume for the container and then execute the build there. Here comes the complete workflow:  
 ```
-umask 0022 # necessary for the following clone
-git clone https://github.com/Freetz-NG/freetz-ng.git # clone (checkout) the remote repo
-cd freetz-ng # cd into the cloned repo
-docker run --rm -it -v $PWD:/workspace pfichtner/freetz # start the docker container
+# necessary for the following clone
+umask 0022
+# clone (checkout) the remote repo
+git clone https://github.com/Freetz-NG/freetz-ng.git
+# cd into the cloned repo
+cd freetz-ng
+# start docker container (will start /bin/bash)
+docker run --rm -it -v $PWD:/workspace pfichtner/freetz
 ```
 **Now you have a shell (bash) where you can work like your are in "a normal bash" like before, e.g. you now call call `make` then `make menuconfig` or any other command you like.** If you want to leave this shell, just type `exit` as usual. 
 
