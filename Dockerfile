@@ -8,7 +8,6 @@ ARG BUILD_USER=builduser
 
 ADD patch-cnf-autoinstall.patch /tmp
 
-# iproute2 ncftp iputils-ping net-tools: not necessary for building but uploading via tools/push_firmware
 RUN apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
@@ -24,10 +23,13 @@ RUN apt-get -y update && \
                libusb-dev unzip intltool libacl1-dev libcap-dev libc6-dev-i386 \
                lib32ncurses5-dev gcc-multilib lib32stdc++6 libglib2.0-dev \
                libxml2-dev cpio \
-               \
+               # needed by tools/freetz_patch
+               patchutils \
+               # not necessary for building but uploading via tools/push_firmware
+               iproute2 ncftp iputils-ping net-tools \
+               # not for freetz but this docker image to switch to unprivileged user in entrypoint
                gosu \
-               \
-               iproute2 ncftp iputils-ping net-tools && \
+               && \
     \
     # need to run again for c-n-f
     apt-get -y update && \
