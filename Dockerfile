@@ -37,7 +37,7 @@ RUN apt-get -y update && \
     sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     locale-gen && \
     \
-    useradd -M -G sudo -d /workspace $BUILD_USER && \
+    useradd -M -G sudo -s `which bash` -d /workspace $BUILD_USER && \
     mkdir -p /workspace && chown -R $BUILD_USER /workspace && \
     \
     patch -p0 </tmp/patch-cnf-autoinstall.patch && \
