@@ -72,4 +72,6 @@ docker run --rm -v $PWD:/workspace pfichtner/freetz /bin/bash -c "make oldconfig
 
 ## Alternative to docker (podman)
 pfichtner/freetz also runs using podman (which has the advantage due it's daemenless so you don't have to add users to any groups)
-```podman run -u root --userns keep-id --rm -it -v $PWD:/workspace docker.io/pfichtner/freetz```
+```
+podman run -u root --userns keep-id --rm -it -v $PWD:/workspace docker.io/pfichtner/freetz
+```
