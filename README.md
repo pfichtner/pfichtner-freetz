@@ -4,6 +4,15 @@
 # pfichtner-freetz
 This is my version of a [Freetz(-NG)](https://github.com/Freetz-NG/freetz-ng) build environment. With this I am running builds to create various images (3270, 3370, 7570,7390, 7490, 7590) with various configs in a CI environment. 
 
+## When and why to use it? 
+- You don't want to mess up your linux system with all those prerequisites needed to build Freetz(-NG)
+- You don't wan't to download a full featured virtual machine image (which if there are new prerequisites you have them to integrate on your own which perhaps was the reason you started using the virtual machine image)
+- The virtual machine image generates to much overhead (RAM/CPU/...)
+- You need (love) fast startup times (milliseconds compared to seconds/minutes)
+
+## How to use it? 
+My recomendation is to checkout Freetz(-NG) on the host system. That way all files checked out and generated during the build resides on the host system. Otherwise they would reside inside the container and would get lost if the container gets removed. 
+
 To do this, "cd" into the directory with the checked out [Freetz(-NG)-repository](https://github.com/Freetz-NG/freetz-ng) and use the current directory ($PWD) as volume for the container and then execute the build there. Here comes the complete workflow:  
 ```
 # necessary for the following clone
@@ -19,6 +28,18 @@ docker run --rm -it -v $PWD:/workspace pfichtner/freetz
 
 (if you don't checkout Freetz(-NG) to the current directory replace $PWD with the path to the checked out repository)
 
+### Docker command explained
+```docker run``` start a new container
+
+```--rm``` remove (purge) that container after it terminates
+
+```-it``` run in interactive mode/run in terminal mode
+
+```-v $PWD:/workspace``` mount the current working directory of the host as /workspace inside the container
+
+```pfichtner/freetz``` the image to create the container from
+
+## Screencast
 Here's a screencast where Freetz(-NG) is checked out and menuconfig and make are run in the container
 <a href="http://pfichtner.github.io/pfichtner-freetz/checkout-on-host"><img src="https://pfichtner.github.io/pfichtner-freetz/asciinema-poster.png" /></a>
 
