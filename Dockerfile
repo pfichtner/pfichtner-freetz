@@ -23,6 +23,7 @@ RUN apt-get -y update && \
                libusb-dev unzip intltool libacl1-dev libcap-dev libc6-dev-i386 \
                lib32ncurses5-dev gcc-multilib lib32stdc++6 libglib2.0-dev \
                libxml2-dev cpio \
+               uuid-dev libssl-dev \
                u-boot-tools device-tree-compiler \
                # needed by tools/freetz_patch
                patchutils \
