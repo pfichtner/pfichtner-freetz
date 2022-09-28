@@ -25,6 +25,7 @@ RUN apt-get -y update && \
                libxml2-dev cpio \
                uuid-dev libssl-dev libgnutls28-dev \
                u-boot-tools device-tree-compiler \
+               curl netcat \
                # needed by tools/freetz_patch
                patchutils \
                # not necessary for building but uploading via tools/push_firmware
