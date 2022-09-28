@@ -20,7 +20,8 @@ docker run --rm -it -v freetz-workspace:/workspace pfichtner/freetz
 git clone https://github.com/Freetz-NG/freetz-ng.git
 ```
 
-### You could checkout inside the pfichtner/freetz container but if you delete the container (e.g. when updating to a newer version of it) you'll lose everything you put meanwhile in this contaier e.g. (intermediate) build results! 
+### You could checkout inside the pfichtner/freetz container 
+But if you delete the container (e.g. when updating to a newer version of it) you'll lose everything you put meanwhile in this container e.g. (intermediate) build results! 
 The first time start looks like: 
 ```
 # start docker container (will start /bin/bash)
