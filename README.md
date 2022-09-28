@@ -11,7 +11,28 @@ This is my version of a [Freetz(-NG)](https://github.com/Freetz-NG/freetz-ng) bu
 - You need (love) fast startup times (milliseconds compared to seconds/minutes)
 
 ## How to use it? 
-My recomendation is to checkout Freetz(-NG) on the host system. That way all files checked out and generated during the build resides on the host system. Otherwise they would reside inside the container and would get lost if the container gets removed. 
+### You could checkout inside a separate volume
+With this approach the files are not stored inside the "pfichtner/freetz build container" but a separate volume: 
+```
+# start docker container (will start /bin/bash)
+docker run --rm -it -v freetz-workspace:/workspace pfichtner/freetz
+# clone (checkout) the remote repo into the current directory (only needed once/the first time)
+git clone https://github.com/Freetz-NG/freetz-ng.git
+```
+
+### You could checkout inside the pfichtner/freetz container but if you delete the container (e.g. when updating to a newer version of it) you'll lose everything you put meanwhile in this contaier e.g. (intermediate) build results! 
+The first time start looks like: 
+```
+# start docker container (will start /bin/bash)
+docker run -it -v freetz-workspace:/workspace pfichtner/freetz
+# clone (checkout) the remote repo into the current directory (only needed once/the first time)
+git clone https://github.com/Freetz-NG/freetz-ng.git
+```
+
+After exiting the container the container is stopped. You can resume it via ```docker start -i <containerid>``` (you can determine the containerid by executing ```docker ps -a```)
+
+### Mount a directory on the host system to use inside the container
+All files checked out and generated during the build resides on the host system. 
 
 To do this, "cd" into the directory with the checked out [Freetz(-NG)-repository](https://github.com/Freetz-NG/freetz-ng) and use the current directory ($PWD) as volume for the container and then execute the build there. Here comes the complete workflow:  
 ```
@@ -24,19 +45,13 @@ cd freetz-ng
 # start docker container (will start /bin/bash)
 docker run --rm -it -v $PWD:/workspace pfichtner/freetz
 ```
-An alternative approach is to use "volumes". Perhaps this is even the easier one espcially if the host system is not a linux system or for beginners. With this approach the files are not stored on the host nor inside the "pfichtner/freetz build container" but a separate volume: 
-```
-# start docker container (will start /bin/bash)
-docker run --rm -it -v freetz-workspace:/workspace pfichtner/freetz
-# clone (checkout) the remote repo into the current directory (only needed once/the first time)
-git clone https://github.com/Freetz-NG/freetz-ng.git
-```
-
-**Now you have a shell (bash) where you can work like your are in "a normal bash" like before, e.g. you now call call `make` then `make menuconfig` or any other command you like.** If you want to leave this shell, just type `exit` as usual. 
-
 (if you don't checkout Freetz(-NG) to the current directory replace $PWD with the path to the checked out repository)
+Please not that the filesystem where Freetz(-NG) has been checked out has to be case-sensitive! 
 
-### Docker command explained
+**In all three cases you'll get a shell (bash) where you can work like your are in "a normal bash" like before, e.g. you now call call `make` then `make menuconfig` or any other command you like.** If you want to leave this shell, just type `exit` as usual. 
+
+
+### Docker command/options explained
 ```docker run``` start a new container
 
 ```--rm``` remove (purge) that container after it terminates
@@ -44,6 +59,8 @@ git clone https://github.com/Freetz-NG/freetz-ng.git
 ```-it``` run in interactive mode/run in terminal mode
 
 ```-v $PWD:/workspace``` mount the current working directory of the host as /workspace inside the container
+
+```-v a-volume-name:/workspace``` use the existing "a-volume-name"-volume or create it if it does not exist and use it as /workspace inside the container
 
 ```pfichtner/freetz``` the image to create the container from
 
