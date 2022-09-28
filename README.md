@@ -24,6 +24,14 @@ cd freetz-ng
 # start docker container (will start /bin/bash)
 docker run --rm -it -v $PWD:/workspace pfichtner/freetz
 ```
+An alternative approach is to use "volumes". Perhaps this is even the easier one espcially if the host system is not a linux system or for beginners. With this approach the files are not stored on the host nor inside the "pfichtner/freetz build container" but a separate volume: 
+```
+# start docker container (will start /bin/bash)
+docker run --rm -it -v freetz-workspace:/workspace pfichtner/freetz
+# clone (checkout) the remote repo into the current directory (only needed once/the first time)
+git clone https://github.com/Freetz-NG/freetz-ng.git
+```
+
 **Now you have a shell (bash) where you can work like your are in "a normal bash" like before, e.g. you now call call `make` then `make menuconfig` or any other command you like.** If you want to leave this shell, just type `exit` as usual. 
 
 (if you don't checkout Freetz(-NG) to the current directory replace $PWD with the path to the checked out repository)
