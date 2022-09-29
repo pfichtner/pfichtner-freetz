@@ -47,7 +47,7 @@ cd freetz-ng
 docker run --rm -it -v $PWD:/workspace pfichtner/freetz
 ```
 (if you don't checkout Freetz(-NG) to the current directory replace $PWD with the path to the checked out repository)
-Please not that the filesystem where Freetz(-NG) has been checked out has to be case-sensitive! 
+Please note that the filesystem where Freetz(-NG) has been checked out has to be case-sensitive! 
 
 **In all three cases you'll get a shell (bash) where you can work like your are in "a normal bash" like before, e.g. you now call call `make` then `make menuconfig` or any other command you like.** If you want to leave this shell, just type `exit` as usual. 
 
