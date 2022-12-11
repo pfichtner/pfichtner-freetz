@@ -11,7 +11,7 @@ This is my version of a [Freetz(-NG)](https://github.com/Freetz-NG/freetz-ng) bu
 - You need (love) fast startup times (milliseconds compared to seconds/minutes)
 
 ## How to use it? 
-##### You could checkout inside a separate volume
+##### You could checkout inside a separate named volume (e.g. "freetz-workspace")
 With this approach the files are not stored inside the "pfichtner/freetz build container" but a separate volume: 
 ```
 # start docker container (will start /bin/bash)
@@ -21,11 +21,11 @@ git clone https://github.com/Freetz-NG/freetz-ng.git
 ```
 
 ##### You could checkout inside the pfichtner/freetz container 
-But if you delete the container (e.g. when updating to a newer version of it) you'll lose everything you put meanwhile in this container e.g. (intermediate) build results! 
+But if you delete the container (e.g. when updating to a newer version of it) you'll lose everything you put meanwhile in this container e.g. configs, (intermediate) build results! 
 The first time start looks like: 
 ```
 # start docker container (will start /bin/bash)
-docker run -it -v freetz-workspace:/workspace pfichtner/freetz
+docker run -it pfichtner/freetz
 # clone (checkout) the remote repo into the current directory (only needed once/the first time)
 git clone https://github.com/Freetz-NG/freetz-ng.git
 ```
@@ -33,7 +33,7 @@ git clone https://github.com/Freetz-NG/freetz-ng.git
 After exiting the container the container is stopped. You can resume it via ```docker start -i <containerid>``` (you can determine the containerid by executing ```docker ps -a```)
 
 ##### You could mount a directory on the host system to use inside the container
-All files checked out and generated during the build resides on the host system. 
+So all files checked out and generated during the build resides on the host system. 
 
 To do this, "cd" into the directory with the checked out [Freetz(-NG)-repository](https://github.com/Freetz-NG/freetz-ng) and use the current directory ($PWD) as volume for the container and then execute the build there. Here comes the complete workflow:  
 ```
