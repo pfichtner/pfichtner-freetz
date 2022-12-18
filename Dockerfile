@@ -8,24 +8,10 @@ ARG BUILD_USER=builduser
 
 ADD patch-cnf-autoinstall.patch /tmp
 
-# wget --quiet -O- https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md | sed -n '/Ubuntu 20 64-Bit:/,$p' | sed -n '0,/sudo apt-get -y install /{s/sudo apt-get -y install //p}' | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install
-
 RUN apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install \
-               rsync kmod execstack sqlite3 libsqlite3-dev \
-               libzstd-dev cmake lib32z1-dev unar inkscape imagemagick graphicsmagick \
-               subversion git bc wget sudo ccache gcc g++ binutils autoconf automake \
-               autopoint libtool-bin make bzip2 libncurses5-dev libreadline-dev \
-               zlib1g-dev flex bison patch texinfo tofrodos gettext pkg-config \
-               ecj fastjar perl libstring-crc32-perl ruby gawk python \
-	       bsdmainutils \
-               libusb-dev unzip intltool libacl1-dev libcap-dev libc6-dev-i386 \
-               lib32ncurses5-dev gcc-multilib lib32stdc++6 libglib2.0-dev \
-               cpio \
-               uuid-dev libssl-dev libgnutls28-dev \
-               curl netcat \
                # things needed by freetz but missing there (at least device-tree-compiler as part of u-boot-tools gets installed)
                libxml2-dev sharutils u-boot-tools \
                # needed by tools/freetz_patch
@@ -36,7 +22,11 @@ RUN apt-get -y update && \
                command-not-found vim-gtk3 locales \
                # not for freetz but this docker image to switch to unprivileged user in entrypoint
                gosu \
+               # needed to download prerequisites
+               wget \
                && \
+    # install prerequisites
+    wget --quiet -O- https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md | sed -n '/Ubuntu 20 64-Bit:/,$p' | sed -n '0,/sudo apt-get -y install /{s/sudo apt-get -y install //p}' | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install && \
     \
     # need to run again for c-n-f
     apt-get -y update && \
