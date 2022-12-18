@@ -1,4 +1,6 @@
 FROM ubuntu:20.04
+ARG FREETZ_DISTRO_ENTRY="Ubuntu 20 64-Bit:"
+ARG FREETZ_CMD_ENTRY="sudo apt-get -y install "
 
 ARG BUILD_USER=builduser
 
@@ -26,7 +28,7 @@ RUN apt-get -y update && \
                wget \
                && \
     # install prerequisites
-    wget --quiet -O- https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md | sed -n '/Ubuntu 20 64-Bit:/,$p' | sed -n '0,/sudo apt-get -y install /{s/sudo apt-get -y install //p}' | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install && \
+    wget --quiet -O- https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md | sed -n "/$FREETZ_DISTRO_ENTRY/,\$p" | sed -n "0,/$FREETZ_CMD_ENTRY/{s/$FREETZ_CMD_ENTRY//p}" | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install && \
     \
     # need to run again for c-n-f
     apt-get -y update && \
