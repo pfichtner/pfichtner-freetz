@@ -1,6 +1,5 @@
 FROM ubuntu:20.04
 ARG FREETZ_DISTRO_ENTRY="Ubuntu 20 64-Bit:"
-ARG FREETZ_CMD_ENTRY="sudo apt-get -y install "
 
 ARG BUILD_USER=builduser
 
@@ -28,7 +27,20 @@ RUN apt-get -y update && \
                wget \
                && \
     # install prerequisites
-    wget --quiet -O- https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md | sed -n "/$FREETZ_DISTRO_ENTRY/,\$p" | sed -n "0,/$FREETZ_CMD_ENTRY/{s/$FREETZ_CMD_ENTRY//p}" | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install && \
+    wget -O- https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md | \
+        # find relevant section (ignore all lines before)
+        sed -n "/$FREETZ_DISTRO_ENTRY/,\$p" | \
+        # find content between "```"
+        sed -n '/```/{:loop n; /```/q; p; b loop}' | \
+        # ignore leading "sudo "
+        sed 's/^sudo //g' | \
+        # only accept lines starting with pattern A or pattern B (and cut the matching pattern)
+        # Reason: Security, we do want to find packages to install and not to execute something read from an external resource
+        sed -n -E 's/^apt-get -y install |^apt -y install //p' | \
+        # if there are packages named foo:i386 or bar:i386 ignore the "i386"
+        sed 's/:i386//g' | \
+	# install the packages
+        DEBIAN_FRONTEND=noninteractive xargs apt-get -y install && \
     \
     # need to run again for c-n-f
     apt-get -y update && \
