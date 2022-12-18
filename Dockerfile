@@ -12,8 +12,8 @@ RUN apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install \
-               # things needed by freetz but missing there (at least device-tree-compiler as part of u-boot-tools gets installed)
-               libxml2-dev sharutils u-boot-tools \
+               # things needed by freetz but missing there?
+               libxml2-dev sharutils \
                # needed by tools/freetz_patch
                patchutils \
                # not necessary for building but uploading via tools/push_firmware
