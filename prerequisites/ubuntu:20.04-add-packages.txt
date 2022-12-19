@@ -1,0 +1,11 @@
+# things needed by freetz but missing there? libxml2-dev -> ???, sharutils -> .prerequisites:program|uudecode|FREETZ_PACKAGE_ASTERISK_GUI
+libxml2-dev sharutils
+# needed by tools/freetz_patch (lsdiff filterdiff)
+patchutils
+# not necessary for building but uploading via tools/push_firmware
+iproute2 ncftp iputils-ping net-tools
+# for convenience inside the container
+command-not-found vim-gtk3 locales
+# not for freetz but this docker image to switch to unprivileged user in entrypoint
+gosu
+
