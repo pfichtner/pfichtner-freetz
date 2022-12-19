@@ -10,31 +10,19 @@ ARG BUILD_USER=builduser
 ### RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ADD patch-cnf-autoinstall.patch /tmp
-ADD prerequisites/${PARENT}-prerequisites-packages.txt /tmp/prerequisites.txt
+ADD prerequisites/${PARENT}-*-packages.txt /tmp/
 
 RUN apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install \
-               # things needed by freetz but missing there? libxml2-dev -> ???, sharutils -> .prerequisites:program|uudecode|FREETZ_PACKAGE_ASTERISK_GUI
-               libxml2-dev sharutils \
-               # needed by tools/freetz_patch (lsdiff filterdiff)
-               patchutils \
-               # not necessary for building but uploading via tools/push_firmware
-               iproute2 ncftp iputils-ping net-tools \
-               # for convenience inside the container
-               command-not-found vim-gtk3 locales \
-               # not for freetz but this docker image to switch to unprivileged user in entrypoint
-               gosu \
-               && \
-    DEBIAN_FRONTEND=noninteractive xargs -a /tmp/prerequisites.txt apt-get -y install && \
-    rm /tmp/prerequisites.txt && \
+    DEBIAN_FRONTEND=noninteractive xargs -a /tmp/${PARENT}-prerequisites-packages.txt apt-get -y install && \
+    # otherwise sed complains: sed: can't read /etc/locale.gen: No such file or directory
+    which locale-gen >/dev/null && locale-gen en_US.UTF-8 UTF-8 || true \
+    [ -r /tmp/${PARENT}-add-packages.txt ] && sed 's/#.*$//;/^$/d' /tmp/${PARENT}-add-packages.txt | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install || true && \
+    rm /tmp/${PARENT}-*-packages.txt && \
     \
     # need to run again for c-n-f
     apt-get -y update && \
-    \
-    sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
-    locale-gen && \
     \
     useradd -M -G sudo -s `which bash` -d /workspace $BUILD_USER && \
     mkdir -p /workspace && chown -R $BUILD_USER /workspace && \
