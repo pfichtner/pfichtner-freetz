@@ -26,8 +26,6 @@ RUN apt-get -y update && \
                command-not-found vim-gtk3 locales \
                # not for freetz but this docker image to switch to unprivileged user in entrypoint
                gosu \
-               # needed to download prerequisites
-               wget \
                && \
     DEBIAN_FRONTEND=noninteractive xargs -a /tmp/prerequisites.txt apt-get -y install && \
     rm /tmp/prerequisites.txt && \
