@@ -20,7 +20,7 @@ RUN apt-get -y update && \
 RUN DEBIAN_FRONTEND=noninteractive xargs -a /tmp/${PARENT}-prerequisites-packages.txt apt-get -y install && \
     rm -f /tmp/${PARENT}-prerequisites-packages.txt && \
     \
-    which locale-gen >/dev/null && locale-gen en_US.UTF-8 || true && \
+    command -v locale-gen >/dev/null 2>&1 && locale-gen en_US.UTF-8 || true && \
     \
     # need to run again for c-n-f
     apt-get -y update && \
