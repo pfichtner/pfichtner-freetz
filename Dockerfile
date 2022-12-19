@@ -15,7 +15,6 @@ ADD prerequisites/${PARENT}-*-packages.txt /tmp/
 RUN apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
-    DEBIAN_FRONTEND=noninteractive xargs -a /tmp/${PARENT}-prerequisites-packages.txt apt-get -y install && \
     [ -r /tmp/${PARENT}-add-packages.txt ] && sed 's/#.*$//;/^$/d' /tmp/${PARENT}-add-packages.txt | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install || true
 
 RUN DEBIAN_FRONTEND=noninteractive xargs -a /tmp/${PARENT}-prerequisites-packages.txt apt-get -y install && \
