@@ -18,7 +18,9 @@ RUN apt-get -y update && \
     DEBIAN_FRONTEND=noninteractive xargs -a /tmp/${PARENT}-prerequisites-packages.txt apt-get -y install && \
     # otherwise sed complains: sed: can't read /etc/locale.gen: No such file or directory
     which locale-gen >/dev/null && locale-gen en_US.UTF-8 UTF-8 || true \
-    [ -r /tmp/${PARENT}-add-packages.txt ] && sed 's/#.*$//;/^$/d' /tmp/${PARENT}-add-packages.txt | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install || true && \
+    [ -r /tmp/${PARENT}-add-packages.txt ] && sed 's/#.*$//;/^$/d' /tmp/${PARENT}-add-packages.txt | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install || true
+
+RUN DEBIAN_FRONTEND=noninteractive xargs -a /tmp/${PARENT}-prerequisites-packages.txt apt-get -y install && \
     rm /tmp/${PARENT}-*-packages.txt && \
     \
     # need to run again for c-n-f
