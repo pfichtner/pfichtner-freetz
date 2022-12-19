@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Run generate-prereqs.sh
       run: sh scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md" prerequisites
     - name: Create Pull Request
