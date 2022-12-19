@@ -1,0 +1,22 @@
+name: Generate package files
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run generate-prereqs.sh
+      run: sh scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md" prerequisites
+    - name: Commit files
+      run: |
+        git config --local user.name  ${{ github.actor }}
+        git add ./prerequisites
+        git commit -m "Update in upstream content"
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
