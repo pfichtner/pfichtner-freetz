@@ -2,6 +2,8 @@ name: Generate Package Files
 
 on:
   workflow_dispatch:
+  schedule: 
+    - cron: '@daily'
 
 jobs:
   build:
