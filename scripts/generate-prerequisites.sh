@@ -39,8 +39,8 @@ OVERWRITE=false
 # ❯ LC_ALL=C lsb_release -s --release
 # 22.10
 
-writePackageFile "$TARGET/$FILENAME" "$TARGET/Ubuntu-22.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 22"
-writePackageFile "$TARGET/$FILENAME" "$TARGET/Ubuntu-20.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 20"
-writePackageFile "$TARGET/$FILENAME" "$TARGET/Ubuntu-18.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 18"
-writePackageFile "$TARGET/$FILENAME" "$TARGET/Ubuntu-16.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 16"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:22.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 22"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:20.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 20"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:18.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 18"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:16.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 16"
 
