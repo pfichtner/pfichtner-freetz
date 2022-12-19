@@ -13,9 +13,9 @@ RUN apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install \
-               # things needed by freetz but missing there?
+               # things needed by freetz but missing there? libxml2-dev -> ???, sharutils -> .prerequisites:program|uudecode|FREETZ_PACKAGE_ASTERISK_GUI
                libxml2-dev sharutils \
-               # needed by tools/freetz_patch
+               # needed by tools/freetz_patch (lsdiff filterdiff)
                patchutils \
                # not necessary for building but uploading via tools/push_firmware
                iproute2 ncftp iputils-ping net-tools \
