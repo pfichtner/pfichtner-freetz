@@ -15,12 +15,12 @@ ADD prerequisites/${PARENT}-*-packages.txt /tmp/
 RUN apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
-    [ -r /tmp/${PARENT}-add-packages.txt ] && sed 's/#.*$//;/^$/d' /tmp/${PARENT}-add-packages.txt | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install || true
+    [ -r /tmp/${PARENT}-add-packages.txt ] && sed 's/#.*$//;/^$/d' /tmp/${PARENT}-add-packages.txt | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install && rm -f /tmp/${PARENT}-add-packages.txt || true
 
 RUN DEBIAN_FRONTEND=noninteractive xargs -a /tmp/${PARENT}-prerequisites-packages.txt apt-get -y install && \
-    rm /tmp/${PARENT}-*-packages.txt && \
+    rm -f /tmp/${PARENT}-prerequisites-packages.txt && \
     \
-    which locale-gen >/dev/null && locale-gen en_US.UTF-8 || true \
+    which locale-gen >/dev/null && locale-gen en_US.UTF-8 || true && \
     \
     # need to run again for c-n-f
     apt-get -y update && \
