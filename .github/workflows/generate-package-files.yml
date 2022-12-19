@@ -1,4 +1,4 @@
-name: Generate package files
+name: Generate Package Files
 
 on:
   workflow_dispatch:
