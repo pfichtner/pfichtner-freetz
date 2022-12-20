@@ -19,7 +19,7 @@ RUN dpkg --add-architecture i386 && \
     apt-get -y dist-upgrade && \
     [ -r /tmp/${PARENT}/init-image-packages.sh ] && sh /tmp/${PARENT}/init-image-packages.sh || true
 
-RUN sh /tmp/${PARENT}/freetz-ng-prerequisites.sh && \
+RUN sh /tmp/${PARENT}/50-freetz-ng-prerequisites.sh && \
     \
     command -v locale-gen >/dev/null 2>&1 && locale-gen en_US.UTF-8 || true && \
     \
