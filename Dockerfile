@@ -12,7 +12,8 @@ ARG BUILD_USER=builduser
 ADD patch-cnf-autoinstall.patch /tmp
 ADD prerequisites/${PARENT}-*-packages.txt /tmp/
 
-RUN apt-get -y update && \
+RUN dpkg --add-architecture i386 && \
+    apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
     [ -r /tmp/${PARENT}-add-packages.txt ] && sed 's/#.*$//;/^$/d' /tmp/${PARENT}-add-packages.txt | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install && rm -f /tmp/${PARENT}-add-packages.txt || true
