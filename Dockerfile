@@ -10,16 +10,15 @@ ARG BUILD_USER=builduser
 ### RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ADD patch-cnf-autoinstall.patch /tmp
-ADD prerequisites/${PARENT}-*-packages.txt /tmp/
+ADD prerequisites/${PARENT}-*-packages.sh /tmp/
 
 RUN dpkg --add-architecture i386 && \
     apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
-    [ -r /tmp/${PARENT}-add-packages.txt ] && sed 's/#.*$//;/^$/d' /tmp/${PARENT}-add-packages.txt | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install && rm -f /tmp/${PARENT}-add-packages.txt || true
+    [ -r /tmp/${PARENT}-add-packages.sh ] && DEBIAN_FRONTEND=noninteractive sh /tmp/${PARENT}-add-packages.sh && rm -f /tmp/${PARENT}-add-packages.sh || true
 
-RUN DEBIAN_FRONTEND=noninteractive xargs -a /tmp/${PARENT}-prerequisites-packages.txt apt-get -y install && \
-    rm -f /tmp/${PARENT}-prerequisites-packages.txt && \
+RUN DEBIAN_FRONTEND=noninteractive sh /tmp/${PARENT}-prerequisites-packages.sh && rm -f /tmp/${PARENT}-prerequisites-packages.sh && \
     \
     command -v locale-gen >/dev/null 2>&1 && locale-gen en_US.UTF-8 || true && \
     \

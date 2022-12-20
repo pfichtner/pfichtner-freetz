@@ -17,13 +17,7 @@ writePackageFile() {
 		# find content between "```"
 		sed -n '/```/{:loop n; /```/q; p; b loop}' | \
 		# ignore leading "sudo "
-		sed 's/^sudo //g' | \
-		# only accept lines starting with pattern A or pattern B (and cut the matching pattern), yes, this is ubuntu specific at the moment
-		sed -n -E 's/^apt-get -y install |^apt -y install //p' | \
-		# if there are packages named foo:i386 or bar:i386 ignore the "i386"
-		sed 's/:i386//g' | \
-		# collapse multiple whitespaces
-		tr -s '[:blank:]' >"$TARGET_FILE"
+		sed 's/^sudo //g' >"$TARGET_FILE"
 }
 
 
@@ -39,9 +33,9 @@ OVERWRITE=false
 # ❯ LC_ALL=C lsb_release -s --release
 # 22.10
 
-writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:22.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 22"
-writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:20.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 20"
-writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:18.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 18"
-writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:16.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 16"
-writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:14.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 14"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:22.04-prerequisites-packages.sh" "$OVERWRITE" " - Ubuntu 22"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:20.04-prerequisites-packages.sh" "$OVERWRITE" " - Ubuntu 20"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:18.04-prerequisites-packages.sh" "$OVERWRITE" " - Ubuntu 18"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:16.04-prerequisites-packages.sh" "$OVERWRITE" " - Ubuntu 16"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:14.04-prerequisites-packages.sh" "$OVERWRITE" " - Ubuntu 14"
 
