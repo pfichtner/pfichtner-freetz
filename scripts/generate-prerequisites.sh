@@ -20,6 +20,8 @@ writePackageFile() {
 		sed 's/^sudo //g' | \
 		# only accept lines starting with pattern A or pattern B (and cut the matching pattern), yes, this is ubuntu specific at the moment
 		sed -n -E 's/^apt-get -y install |^apt -y install //p' | \
+		# if there are packages named foo:i386 or bar:i386 ignore the "i386"
+		sed 's/:i386//g' | \
 		# collapse multiple whitespaces
 		tr -s '[:blank:]' >"$TARGET_FILE"
 }
