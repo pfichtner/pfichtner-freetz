@@ -2,7 +2,8 @@
 apt-get -y install command-not-found vim-gtk3 locales
 
 # our docker entrypoint relies on gosu to switch to unprivileged user
-apt-get -y install gosu
+# we do rely on patch so get sure it's really there
+apt-get -y install gosu patch
 
 ######################################################################################################
 ######################################################################################################
