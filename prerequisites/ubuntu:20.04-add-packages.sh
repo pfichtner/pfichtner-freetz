@@ -7,9 +7,6 @@ apt-get -y install gosu
 ######################################################################################################
 ######################################################################################################
 
-# missing in Freeet-NG's .prerequisites -> .prerequisites:program|uudecode|FREETZ_PACKAGE_ASTERISK_GUI
-apt-get -y install sharutils
-
 # not necessary for building but by tools/freetz_patch (lsdiff filterdiff)
 apt-get -y install patchutils
 
