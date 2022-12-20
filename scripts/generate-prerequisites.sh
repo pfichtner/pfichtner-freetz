@@ -39,3 +39,8 @@ writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:18.04-prerequisites-package
 writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:16.04-prerequisites-packages.sh" "$OVERWRITE" " - Ubuntu 16"
 writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:14.04-prerequisites-packages.sh" "$OVERWRITE" " - Ubuntu 14"
 
+writePackageFile "$TARGET/$FILENAME" "$TARGET/Fedora:36-prerequisites-packages.sh" "$OVERWRITE" " - Fedora 36"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/Fedora:35-prerequisites-packages.sh" "$OVERWRITE" " - Fedora 35"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/Fedora:34-prerequisites-packages.sh" "$OVERWRITE" " - Fedora 33\/34"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/Fedora:33-prerequisites-packages.sh" "$OVERWRITE" " - Fedora 33\/34"
+
