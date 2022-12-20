@@ -43,4 +43,5 @@ writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:22.04-prerequisites-package
 writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:20.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 20"
 writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:18.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 18"
 writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:16.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 16"
+writePackageFile "$TARGET/$FILENAME" "$TARGET/ubuntu:14.04-prerequisites-packages.txt" "$OVERWRITE" " - Ubuntu 14"
 
