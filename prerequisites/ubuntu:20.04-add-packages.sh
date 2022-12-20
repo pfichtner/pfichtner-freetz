@@ -1,7 +1,7 @@
 # for convenience inside the container
 apt-get -y install command-not-found vim-gtk3 locales
 
-# not for freetz but this docker image to switch to unprivileged user in entrypoint
+# our docker entrypoint relies on gosu to switch to unprivileged user
 apt-get -y install gosu
 
 ######################################################################################################
