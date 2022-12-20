@@ -12,13 +12,14 @@ ARG BUILD_USER=builduser
 ADD patch-cnf-autoinstall.patch /tmp
 ADD provisioning/${PARENT} /tmp/${PARENT}
 
+ENV DEBIAN_FRONTEND=noninteractive 
 RUN dpkg --add-architecture i386 && \
     apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
-    [ -r /tmp/${PARENT}/init-image-packages.sh ] && DEBIAN_FRONTEND=noninteractive sh /tmp/${PARENT}/init-image-packages.sh && rm -f /tmp/${PARENT}/init-image-packages.sh || true
+    [ -r /tmp/${PARENT}/init-image-packages.sh ] && sh /tmp/${PARENT}/init-image-packages.sh || true
 
-RUN DEBIAN_FRONTEND=noninteractive sh /tmp/${PARENT}/freetz-ng-prerequisites.sh && rm -f /tmp/${PARENT}/freetz-ng-prerequisites.sh && \
+RUN sh /tmp/${PARENT}/freetz-ng-prerequisites.sh && \
     \
     command -v locale-gen >/dev/null 2>&1 && locale-gen en_US.UTF-8 || true && \
     \
@@ -32,7 +33,8 @@ RUN DEBIAN_FRONTEND=noninteractive sh /tmp/${PARENT}/freetz-ng-prerequisites.sh 
     rm /tmp/patch-cnf-autoinstall.patch && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers && \
     # disable sudo hint without having any matching file in $HOME
-    sed -i 's/\[ \! -e \"\$HOME\/\.hushlogin\" \]/false/' /etc/bash.bashrc
+    sed -i 's/\[ \! -e \"\$HOME\/\.hushlogin\" \]/false/' /etc/bash.bashrc && \
+    rm -rf /tmp/${PARENT}
 
     # do not purge package lists since we need them for autoinstalling via c-n-f
     # rm -rf /var/lib/apt/lists/*
