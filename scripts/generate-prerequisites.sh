@@ -36,14 +36,14 @@ OVERWRITE=false
 # ❯ LC_ALL=C lsb_release -s --release
 # 22.10
 
-writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:22.04/freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 22"
-writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:20.04/freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 20"
-writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:18.04/freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 18"
-writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:16.04/freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 16"
-writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:14.04/freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 14"
+writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:22.04/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 22"
+writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:20.04/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 20"
+writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:18.04/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 18"
+writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:16.04/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 16"
+writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:14.04/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 14"
 
-writePackageFile "$CACHE/$FILENAME" "$TARGET/fedora:36/freetz-ng-prerequisites.sh" "$OVERWRITE" " - Fedora 36"
-writePackageFile "$CACHE/$FILENAME" "$TARGET/fedora:35/freetz-ng-prerequisites.sh" "$OVERWRITE" " - Fedora 35"
-writePackageFile "$CACHE/$FILENAME" "$TARGET/fedora:34/freetz-ng-prerequisites.sh" "$OVERWRITE" " - Fedora 33\/34"
-writePackageFile "$CACHE/$FILENAME" "$TARGET/fedora:33/freetz-ng-prerequisites.sh" "$OVERWRITE" " - Fedora 33\/34"
+writePackageFile "$CACHE/$FILENAME" "$TARGET/fedora:36/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Fedora 36"
+writePackageFile "$CACHE/$FILENAME" "$TARGET/fedora:35/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Fedora 35"
+writePackageFile "$CACHE/$FILENAME" "$TARGET/fedora:34/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Fedora 33\/34"
+writePackageFile "$CACHE/$FILENAME" "$TARGET/fedora:33/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Fedora 33\/34"
 
