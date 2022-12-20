@@ -10,15 +10,15 @@ ARG BUILD_USER=builduser
 ### RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ADD patch-cnf-autoinstall.patch /tmp
-ADD prerequisites/${PARENT}-*-packages.sh /tmp/
+ADD provisioning/${PARENT} /tmp/${PARENT}
 
 RUN dpkg --add-architecture i386 && \
     apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y dist-upgrade && \
-    [ -r /tmp/${PARENT}-add-packages.sh ] && DEBIAN_FRONTEND=noninteractive sh /tmp/${PARENT}-add-packages.sh && rm -f /tmp/${PARENT}-add-packages.sh || true
+    [ -r /tmp/${PARENT}/init-image-packages.sh ] && DEBIAN_FRONTEND=noninteractive sh /tmp/${PARENT}/init-image-packages.sh && rm -f /tmp/${PARENT}/init-image-packages.sh || true
 
-RUN DEBIAN_FRONTEND=noninteractive sh /tmp/${PARENT}-prerequisites-packages.sh && rm -f /tmp/${PARENT}-prerequisites-packages.sh && \
+RUN DEBIAN_FRONTEND=noninteractive sh /tmp/${PARENT}/freetz-ng-prerequisites.sh && rm -f /tmp/${PARENT}/freetz-ng-prerequisites.sh && \
     \
     command -v locale-gen >/dev/null 2>&1 && locale-gen en_US.UTF-8 || true && \
     \
