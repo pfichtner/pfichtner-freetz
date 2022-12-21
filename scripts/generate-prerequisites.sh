@@ -19,7 +19,9 @@ writePackageFile() {
 		# find content between "```"
 		sed -n '/```/{:loop n; /```/q; p; b loop}' | \
 		# ignore leading "sudo "
-		sed 's/^sudo //g' >"$TARGET_FILE"
+		sed 's/^sudo //g' | \
+		# ignore trailing "&& exit" and "&& exit" (could be done with ONE sed -E as well)
+		sed 's/\s*&&\s*exit$//g' | sed -E 's/\s*;\s*exit$//g' >"$TARGET_FILE"
 }
 
 
