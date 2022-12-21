@@ -3,7 +3,7 @@ name: Update Freetz-NG Prerequisites
 on:
   workflow_dispatch:
   schedule: 
-    - cron: '55 * * * *'
+    - cron: '55 3 * * *'
 
 jobs:
   build:
