@@ -19,7 +19,7 @@ jobs:
         path: ~/.cache
         key: ${{ runner.os }}-build-${{ env.cache-name }}
     - name: Run generate-prereqs.sh
-      run: sh scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md" ".cache" "provisioning"
+      run: sh scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md" ~/.cache provisioning
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4
       with:
