@@ -17,7 +17,7 @@ jobs:
         cache-name: cache-curl-results
       with:
         path: ~/.cache
-        key: ${{ runner.os }}-build-${{ env.cache-name }}
+        key: ${{ runner.os }}-${{ hashFiles('**') }}
     - name: Run generate-prereqs.sh
       run: sh scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md" ~/.cache provisioning
     - name: Create Pull Request
