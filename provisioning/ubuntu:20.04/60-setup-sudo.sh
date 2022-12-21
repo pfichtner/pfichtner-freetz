@@ -1,4 +1,4 @@
-command -v sudo 2>/dev/null 2>&1 || apt-get -y install sudo
+command -v sudo >/dev/null 2>&1 || apt-get -y install sudo
 
 echo '%sudo ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
 
