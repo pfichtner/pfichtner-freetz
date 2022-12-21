@@ -4,7 +4,7 @@
 
 umask 0022
 
-WS_OWNER=`stat -c "%u" /workspace`
+WS_OWNER=`stat -c "%u" $BUILD_USER_HOME`
 [ $WS_OWNER -ne 0 -a $WS_OWNER -ne `id -u $BUILD_USER` ] && usermod -u $WS_OWNER $BUILD_USER
 
 DEFAULT_SHELL=`getent passwd $BUILD_USER | cut -f 7 -d':'`
