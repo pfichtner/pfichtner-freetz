@@ -17,7 +17,8 @@ jobs:
         cache-name: cache-curl-results
       with:
         path: ~/.cache
-        key: ${{ runner.os }}-${{ hashFiles('**') }}
+        key: primes-${{ runner.os }}-${{ github.run_id }}
+        restore-keys: primes-${{ runner.os }}
     - name: Run generate-prereqs.sh
       run: sh scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md" ~/.cache provisioning
     - name: Create Pull Request
@@ -28,4 +29,3 @@ jobs:
         branch-suffix: short-commit-hash
         delete-branch: true
         assignees: pfichtner
-
