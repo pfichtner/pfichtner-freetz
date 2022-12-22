@@ -10,18 +10,20 @@ writePackageFile() {
 	OVERWRITE="$3"
 	DISTRO_ENTRY="$4"
 
-	[ -e "$TARGET_FILE" -a "$OVERWRITE" = "false" ] && return
+	[ -e "$TARGET_FILE" ] && [ "$OVERWRITE" = "false" ] && return
 
 	[ -d `dirname "$TARGET_FILE"` ] || mkdir -p `dirname "$TARGET_FILE"`
-	cat $SOURCE_FILE | \
+
+	cat >"$TARGET_FILE" <<EOF
+shopt -s expand_aliases
+alias sudo=eval
+EOF
+
+	cat "$SOURCE_FILE" | \
 		# find relevant section (ignore all lines before)
 		sed -n "/$DISTRO_ENTRY/,\$p" | \
 		# find content between "```"
-		sed -n '/```/{:loop n; /```/q; p; b loop}' | \
-		# ignore leading "sudo "
-		sed 's/^sudo //g' | \
-		# ignore trailing "&& exit" and "&& exit" (could be done with ONE sed -E as well)
-		sed 's/\s*&&\s*exit$//g' | sed -E 's/\s*;\s*exit$//g' >"$TARGET_FILE"
+		sed -n '/```/{:loop n; /```/q; p; b loop}' >>"$TARGET_FILE"
 }
 
 
