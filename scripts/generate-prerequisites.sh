@@ -14,10 +14,10 @@ writePackageFile() {
 
 	[ -d `dirname "$TARGET_FILE"` ] || mkdir -p `dirname "$TARGET_FILE"`
 
-	cat >"$TARGET_FILE" <<EOF
-shopt -s expand_aliases
-alias sudo=eval
-EOF
+#	cat >"$TARGET_FILE" <<EOF
+#sudo() { eval ${*@Q}; }
+#EOF
+	echo 'sudo() { eval ${*@Q}; }' >"$TARGET_FILE"
 
 	cat "$SOURCE_FILE" | \
 		# find relevant section (ignore all lines before)
