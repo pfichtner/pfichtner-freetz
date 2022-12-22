@@ -1,19 +1,19 @@
 #!/bin/bash
 
-TMPDIR=`mktemp -d`
-trap "rm -rf $TMPDIR" EXIT
+TMPDIR=$(mktemp -d)
+trap 'rm -rf $TMPDIR' EXIT
 
-mkdir $TMPDIR/tools
-cp -ax tools/prerequisites $TMPDIR/tools/
-cp -ax .prerequisites $TMPDIR/.prerequisites.orig
-cd $TMPDIR/
+mkdir "$TMPDIR/tools"
+cp -ax tools/prerequisites "$TMPDIR/tools"
+cp -ax .prerequisites "$TMPDIR/.prerequisites.orig"
+cd "$TMPDIR" || exit 1
 cp -ax tools/prerequisites tools/patch
 
 while read parser file depends; do
         echo $parser $file
 done < <(sed 's/#.*//g;/^[ \t]*$/d' "$TMPDIR/.prerequisites.orig" 2>/dev/null) >"$TMPDIR/.prerequisites"
 
-$TMPDIR/tools/prerequisites
+"$TMPDIR/tools/prerequisites"
 
 exit $?
 
