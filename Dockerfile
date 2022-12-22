@@ -1,4 +1,4 @@
-ARG PARENT=ubuntu:20.04
+ARG PARENT=ubuntu:22.04
 FROM $PARENT
 
 # https://stackoverflow.com/questions/44438637/arg-substitution-in-run-command-not-working-for-dockerfile/56748289#56748289
