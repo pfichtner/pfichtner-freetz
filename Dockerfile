@@ -10,7 +10,7 @@ ARG PROVISION_DIR=/tmp/${PARENT}
 
 ADD provisioning/${PARENT} ${PROVISION_DIR}
 ARG DEBIAN_FRONTEND=noninteractive 
-RUN for SCRIPT in ${PROVISION_DIR}/*.sh; do sh $SCRIPT || exit $?; done && rm -rf ${PROVISION_DIR}
+RUN for SCRIPT in ${PROVISION_DIR}/*.sh; do bash $SCRIPT || exit $?; done && rm -rf ${PROVISION_DIR}
 
 WORKDIR ${BUILD_USER_HOME}
 ENV BUILD_USER=$BUILD_USER
