@@ -46,6 +46,8 @@ writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:18.04/50-freetz-ng-prerequis
 writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:16.04/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 16"
 writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:14.04/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Ubuntu 14"
 
+writePackageFile "$CACHE/$FILENAME" "$TARGET/ubuntu:14.04/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Debian 11"
+
 writePackageFile "$CACHE/$FILENAME" "$TARGET/fedora:36/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Fedora 36"
 writePackageFile "$CACHE/$FILENAME" "$TARGET/fedora:35/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Fedora 35"
 writePackageFile "$CACHE/$FILENAME" "$TARGET/fedora:34/50-freetz-ng-prerequisites.sh" "$OVERWRITE" " - Fedora 33\/34"
