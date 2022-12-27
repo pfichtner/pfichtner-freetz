@@ -7,6 +7,6 @@ apt-get -y update
 # (we could uninstall it afterwards but leave it there, it doesn't harm)
 command -v patch >/dev/null 2>&1 || apt-get -y install patch
 
-patch -p0 <$PROVISION_DIR/patch-cnf-autoinstall.patch
+(cd / && patch -p0 <$PROVISION_DIR/patch-cnf-autoinstall.patch)
 rm $PROVISION_DIR/patch-cnf-autoinstall.patch
 
