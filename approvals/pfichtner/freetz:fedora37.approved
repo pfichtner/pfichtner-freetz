@@ -1,0 +1,2 @@
+ERROR: The program 'fastjar' was not found in path
+ERROR: The header file 'readline/readline.h' was not found in /usr/(local/)include
