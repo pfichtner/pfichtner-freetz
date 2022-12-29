@@ -26,6 +26,5 @@ jobs:
       with:
         title: 'https://github.com/Freetz-NG/freetz-ng/blob/master/docs/PREREQUISITES.md was updated'
         commit-message: "Update in upstream content"
-        branch-suffix: short-commit-hash
         delete-branch: true
         assignees: pfichtner
