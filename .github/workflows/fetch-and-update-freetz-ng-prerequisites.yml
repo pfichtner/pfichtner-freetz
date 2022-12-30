@@ -35,6 +35,5 @@ jobs:
     - name: Release Dependency Diff File
       uses: ncipollo/release-action@v1.11.2
       with:
-	tag: ${{ env.NOW }}
+        tag: ${{ env.NOW }}
         artifacts: "/tmp/dependency-diff.txt"
-
