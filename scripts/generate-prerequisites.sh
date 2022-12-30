@@ -14,16 +14,13 @@ writePackageFile() {
 
 	[ -d `dirname "$TARGET_FILE"` ] || mkdir -p `dirname "$TARGET_FILE"`
 
-#	cat >"$TARGET_FILE" <<EOF
-#sudo() { eval ${*@Q}; }
-#EOF
-	echo 'sudo() { eval ${*@Q}; }' >"$TARGET_FILE"
-
-	cat "$SOURCE_FILE" | \
+	PREFIX='sudo() { eval ${*@Q}; }'
+	CONTENT=$(cat "$SOURCE_FILE" | \
 		# find relevant section (ignore all lines before)
 		sed -n "/$DISTRO_ENTRY/,\$p" | \
 		# find content between "```"
-		sed -n '/```/{:loop n; /```/q; p; b loop}' >>"$TARGET_FILE"
+		sed -n '/```/{:loop n; /```/q; p; b loop}')
+	echo -e "$PREFIX\n$CONTENT" >"$TARGET_FILE"
 }
 
 
