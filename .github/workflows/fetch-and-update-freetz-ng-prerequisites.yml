@@ -18,7 +18,7 @@ jobs:
       with:
         path: ~/.cache
         key: curlcontent-${{ runner.os }}-${{ github.run_id }}
-        restore-keys: primes-${{ runner.os }}
+        restore-keys: curlcontent-${{ runner.os }}
     - name: Run generate-prereqs.sh
       run: sh scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md" ~/.cache provisioning
     - name: Create Pull Request
