@@ -2,7 +2,7 @@
 
 deps() {
 	FILTER="$1"
-	FILE="$2/50-freetz-ng-prerequisites.sh"
+	FILE="$PROVISIONING_DIR/$2/50-freetz-ng-prerequisites.sh"
 	sed -n -E 's/'"$FILTER"'//p' $FILE | tr ' ' '\n' | grep . | sort | uniq
 }
 
@@ -18,12 +18,13 @@ calcDiff() {
 
 echo "| From | To | Changes |"
 echo "| - | - | - |"
+
 PROVISIONING_DIR="provisioning"
 distroDiff() {
 	DIRS=$(cd "$PROVISIONING_DIR" && ls -d $1)
 	PREV=""
 	echo "$DIRS" | tac | while read DISTRO; do
-		[ -n "$PREV" ] && calcDiff "$2" "$PROVISIONING_DIR/$PREV" "$PROVISIONING_DIR/$DISTRO"
+		[ -n "$PREV" ] && calcDiff "$2" "$PREV" "$DISTRO"
 		PREV="$DISTRO"
 	done
 }
