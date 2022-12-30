@@ -1,7 +1,6 @@
 name: Add Dependency Information to PR
 
-on:
-  pull_request_target:
+on: [pull_request]
 
 jobs:
   comment_pr:
