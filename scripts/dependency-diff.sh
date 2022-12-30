@@ -11,9 +11,8 @@ calcDiff() {
 }
 
 
-PREV=""
-
 cd provisioning
+PREV=""
 ls -d ubuntu* | tac | while read DISTRO; do
 	[ -n "$PREV" ] && calcDiff "$PREV" "$DISTRO"
 	PREV="$DISTRO"
