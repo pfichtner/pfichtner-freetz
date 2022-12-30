@@ -8,9 +8,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Run scripts/dependency-diff.sh
-      run: bash scripts/dependency-diff.sh >/tmp/dependency-diff.txt
+      run: bash scripts/dependency-diff.sh >.dependency-diff.txt
     - name: Comment PR
       uses: thollander/actions-comment-pull-request@v2
       with:
-        filePath: /tmp/dependency-diff.txt
+        filePath: .dependency-diff.txt
 
