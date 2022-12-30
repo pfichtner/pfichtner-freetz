@@ -28,13 +28,4 @@ jobs:
         commit-message: "Update in upstream content"
         delete-branch: true
         assignees: pfichtner
-    - name: Run scripts/dependency-diff.sh
-      run: bash scripts/dependency-diff.sh >"/tmp/dependency-diff.txt"
-    - name: set DATE_NOW env
-      run: echo "DATE_NOW=$(date +'%s')" >> $GITHUB_ENV
-    - name: Release Dependency Diff File
-      uses: ncipollo/release-action@v1.11.2
-      with:
-        tag: ${{ env.DATE_NOW }}
-        artifacts: "/tmp/dependency-diff.txt"
 

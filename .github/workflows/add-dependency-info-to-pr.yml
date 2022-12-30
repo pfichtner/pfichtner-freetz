@@ -1,0 +1,16 @@
+name: Add Dependency Information to PR
+
+on: pull_request
+
+jobs:
+  comment_pr:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run scripts/dependency-diff.sh
+      run: bash scripts/dependency-diff.sh >/tmp/dependency-diff.txt
+    - name: Comment PR
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        filePath: /tmp/dependency-diff.txt
+
