@@ -20,7 +20,7 @@ writePackageFile() {
 		sed -n "/$DISTRO_ENTRY/,\$p" | \
 		# find content between "```"
 		sed -n '/```/{:loop n; /```/q; p; b loop}')
-	echo -e "$PREFIX\n$CONTENT" >"$TARGET_FILE"
+	echo -e "$PREFIX\n$CONTENT\n" >"$TARGET_FILE"
 }
 
 
