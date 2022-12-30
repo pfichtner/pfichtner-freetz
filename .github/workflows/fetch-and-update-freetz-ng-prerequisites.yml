@@ -28,8 +28,8 @@ jobs:
         commit-message: "Update in upstream content"
         delete-branch: true
         assignees: pfichtner
-    - name: Run generate-prereqs.sh
-      run: sh scripts/dependency-diff.sh >"/tmp/dependency-diff.txt"
+    - name: Run scripts/dependency-diff.sh
+      run: bash scripts/dependency-diff.sh >"/tmp/dependency-diff.txt"
     - name: Release Dependency Diff File
       uses: ncipollo/release-action@v1.11.2
       with:
