@@ -30,10 +30,11 @@ jobs:
         assignees: pfichtner
     - name: Run scripts/dependency-diff.sh
       run: bash scripts/dependency-diff.sh >"/tmp/dependency-diff.txt"
-    - name: set NOW env
-      run: echo "::set-env name=NOW::$(date +'%Y-%m-%dT%H:%M:%S')"
+    - name: set DATE_NOW env
+      run: echo "DATE_NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
     - name: Release Dependency Diff File
       uses: ncipollo/release-action@v1.11.2
       with:
-        tag: ${{ env.NOW }}
+        tag: ${{ env.DATE_NOW }}
         artifacts: "/tmp/dependency-diff.txt"
+
