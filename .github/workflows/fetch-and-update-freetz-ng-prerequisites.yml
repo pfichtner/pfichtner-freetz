@@ -26,6 +26,7 @@ jobs:
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4
       with:
+	# token is necessary so that the PR can be commented by another GHA workflow
         token: ${{ secrets.PR_PAT }}
         title: 'https://github.com/Freetz-NG/freetz-ng/blob/master/docs/PREREQUISITES.md was updated'
         branch: create-pull-request/patch-${{ env.ETAG }}
