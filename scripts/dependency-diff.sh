@@ -7,7 +7,7 @@ deps() {
 
 calcDiff() {
 	DIFF=$(diff -Naur <(deps "$2") <(deps "$1") | grep -v ' ' | sort | tr '\n' ' ')
-	echo diff "$1 to $2: $DIFF"
+	echo "+$1 -$2: $DIFF"
 }
 
 calcDiff "ubuntu:22.04" "ubuntu:20.04"
