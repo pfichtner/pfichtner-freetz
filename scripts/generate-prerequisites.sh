@@ -34,7 +34,7 @@ writeDepsJsonFile() {
  	CONTENT=$(content "$SOURCE_FILE" "$DISTRO_ENTRY") 
 	PACKAGES=$(jq -R -s -c 'split("\n") | map(select(length > 0))' <(deps "$CONTENT" "$PATTERN"))
 
-	TEMPLATE='{ "packages": "%s" }'
+	TEMPLATE='{ "packages": %s }'
 	DATA=""
 	printf -v DATA "$TEMPLATE" "$PACKAGES"
 	echo "$DATA" >"$TARGET_FILE"
