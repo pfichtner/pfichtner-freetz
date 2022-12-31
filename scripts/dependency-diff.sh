@@ -14,7 +14,7 @@ calcDiff() {
 echo "| From | To | Changes |"
 echo "| - | - | - |"
 
-PROVISIONING_DIR="provisioning"
+PROVISIONING_DIR="$1"
 distroDiff() {
 	DIRS=$(cd "$PROVISIONING_DIR" && ls -d $1)
 	PREV=""
