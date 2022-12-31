@@ -6,10 +6,6 @@ deps() {
 	sed -n -E 's/'"$FILTER"'//p' $FILE | tr ' ' '\n' | grep . | sort | uniq
 }
 
-ubuntuDeps() {
-	debs "$1" 
-}
-
 calcDiff() {
 	DIFF=$(diff -Naur <(deps "$1" "$3") <(deps "$1" "$2") | grep -v ' ' | sort | tr '\n' ' ')
 	echo "| $3 | $2 | $DIFF |"
