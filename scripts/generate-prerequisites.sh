@@ -7,7 +7,11 @@ TARGET=$3
 deps() {
 	CONTENT="$1"
 	FILTER="$2"
-	echo "$CONTENT" | sed -n -E 's/'"$FILTER"'//p' | tr ' ' '\n' | grep . | sort | uniq
+	# echo "$CONTENT" | sed -n -E 's/'"$FILTER"'//p' | tr ' ' '\n' | grep .
+
+	CONTENT=$(echo "$CONTENT" | sed -n -E 's/'"$FILTER"'//p')
+	IFS=$'\n' arr=( $(xargs -n1 <<<"$CONTENT") )
+	printf '%s\n' "${arr[@]}" | grep .
 }
 
 content() {
@@ -20,6 +24,16 @@ content() {
 	sed -n '/```/{:loop n; /```/q; p; b loop}'
 }
 
+linesToJsonArray() {
+	echo "$1" | jq -R -s -c 'split("\n") | map(select(length > 0))'
+}
+
+toJson() {
+	DATA=""
+	printf -v DATA "$@"
+	echo "$DATA"
+}
+
 writeDepsJsonFile() {
 	SOURCE_FILE="$1"
 	TARGET_FILE="$2"
@@ -29,15 +43,20 @@ writeDepsJsonFile() {
 
 	[ -e "$TARGET_FILE" ] && [ "$OVERWRITE" = "false" ] && return
 
-	[ -d `dirname "$TARGET_FILE"` ] || mkdir -p `dirname "$TARGET_FILE"`
+	[ -d $(dirname "$TARGET_FILE") ] || mkdir -p $(dirname "$TARGET_FILE")
 	
  	CONTENT=$(content "$SOURCE_FILE" "$DISTRO_ENTRY") 
-	PACKAGES=$(jq -R -s -c 'split("\n") | map(select(length > 0))' <(deps "$CONTENT" "$PATTERN"))
+	DEPS=$(deps "$CONTENT" "$PATTERN")
+	PACKAGES=$(linesToJsonArray "$DEPS")
 
-	TEMPLATE='{ "packages": %s }'
-	DATA=""
-	printf -v DATA "$TEMPLATE" "$PACKAGES"
-	echo "$DATA" >"$TARGET_FILE"
+	if [[ "$DISTRO_ENTRY" == *"Fedora"* ]]; then
+		INSTALL_GROUPS=$(deps "$CONTENT" '^sudo dnf -y groupinstall ')
+		ARR=$(linesToJsonArray "$INSTALL_GROUPS")
+		toJson '{ "groups": %s, "packages": %s }' "$ARR" "$PACKAGES" >"$TARGET_FILE"
+	else
+		toJson '{ "packages": %s }' "$PACKAGES" >"$TARGET_FILE"
+	fi
+
 }
 
 writePackageFile() {
@@ -90,7 +109,6 @@ writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:14.04" "$OVERWRITE" ' - Ubuntu 1
 
 writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:11"    "$OVERWRITE" ' - Debian 11'     "$DEBIAN_PATTERN"
 
-# TODO add 'sudo dnf -y groupinstall 'Development Tools' 'Development Libraries'' information to JSON
 writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:36"    "$OVERWRITE" ' - Fedora 36'     "$FEDORA_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:35"    "$OVERWRITE" ' - Fedora 35'     "$FEDORA_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:34"    "$OVERWRITE" ' - Fedora 33\/34' "$FEDORA_PATTERN"
