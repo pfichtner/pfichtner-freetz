@@ -7,7 +7,8 @@ deps() {
 
 calcDiff() {
 	DIFF=$(diff -Naur <(deps "$2") <(deps "$1") | grep -v ' ' | sort | tr '\n' ' ')
-	echo "| $2 | $1 | $DIFF |"
+	[ "$MULTILINE" = 'y' ] && DIFF=$(echo "$DIFF" | sed 's/ /<br>/g')
+	echo "| $2 | **$1** | $DIFF |"
 }
 
 
@@ -23,6 +24,8 @@ distroDiff() {
 		PREV="$DISTRO"
 	done
 }
+
+MULTILINE="n"
 
 distroDiff 'ubuntu*'
 distroDiff 'debian*'
