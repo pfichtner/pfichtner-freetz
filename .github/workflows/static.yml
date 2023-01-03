@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Run scripts/dependency-diff.sh
+        run: bash scripts/dependency-diff.sh provisioning >provisioning/dependency-diff.md
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
