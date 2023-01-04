@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+set -e
 
 [ "${COMMAND_NOT_FOUND_AUTOINSTALL}" = 'n' ] && unset COMMAND_NOT_FOUND_AUTOINSTALL || export COMMAND_NOT_FOUND_AUTOINSTALL=y
 
@@ -37,8 +38,8 @@ DEFAULT_SHELL=`getent passwd $BUILD_USER | cut -f 7 -d':'`
 cd /
 [ -r "$BUILD_USER_HOME" ] && cd "$BUILD_USER_HOME" 
 if [ `id -u` -eq 0 ]; then
-	[ "$#" -gt 0 ] && gosu "$BUILD_USER" "$@" || gosu "$BUILD_USER" "$DEFAULT_SHELL" -l
+	[ "$#" -gt 0 ] && exec gosu "$BUILD_USER" "$@" || exec gosu "$BUILD_USER" "$DEFAULT_SHELL" -l
 else
-	[ "$#" -gt 0 ] && "$@" || "$DEFAULT_SHELL" -l
+	[ "$#" -gt 0 ] && exec "$@" || exec "$DEFAULT_SHELL" -l
 fi
 
