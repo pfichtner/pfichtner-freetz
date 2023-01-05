@@ -15,6 +15,7 @@ RUN for SCRIPT in ${PROVISION_DIR}/*.sh; do bash $SCRIPT || exit $?; done && rm 
 # if running in podman we have to create a default user in the image since we have no root priviliges to do in ENTRYPOINT
 RUN useradd -G sudo -s /bin/bash -d /workspace -m builduser
 
+WORKDIR /
 ADD entrypoint.sh /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
