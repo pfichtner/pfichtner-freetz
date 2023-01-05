@@ -12,7 +12,7 @@ setToDefaults() {
 }
 
 # for backwards compatibility
-[ -z "$BUILD_USER" ] && [ -z "$BUILD_USER_HOME" ] && [ -z "$BUILD_USER_UID" ] && setToDefaults && USE_UID_FROM="$BUILD_USER_HOME"
+[ -z "$BUILD_USER" ] && [ -z "$BUILD_USER_HOME" ] && [ -z "$BUILD_USER_UID" ] && setToDefaults && USE_UID_FROM="$BUILD_USER_HOME" && cd "$BUILD_USER_HOME"
 
 # ignore PARAMS BUILD_USER and BUILD_USER_HOME (use defaults) if not root
 [ `id -u` -eq 0 ] || setToDefaults
@@ -35,8 +35,6 @@ if [ `id -u` -eq 0 ]; then
 fi
 
 DEFAULT_SHELL=`getent passwd $BUILD_USER | cut -f 7 -d':'`
-cd /
-[ -r "$BUILD_USER_HOME" ] && cd "$BUILD_USER_HOME" 
 if [ `id -u` -eq 0 ]; then
 	[ "$#" -gt 0 ] && exec gosu "$BUILD_USER" "$@" || exec gosu "$BUILD_USER" "$DEFAULT_SHELL" -l
 else
