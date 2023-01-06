@@ -65,6 +65,19 @@ Please note that the filesystem where Freetz(-NG) has been checked out has to be
 
 ```pfichtner/freetz``` the image to create the container from
 
+## Environment variables
+You can pass the following environment variables (using docker's ```-e``` parameters)
+- ```BUILD_USER```  the username of the non-root user the entrypoint will switch to
+- ```BUILD_USER_UID``` the uid of the ```BUILD_USER```. This should be the UID of your current user so that all files are read/write using the same UID that the user started the container. So ```-e BUILD_USER_UID=$(id -u)``` is a good option. 
+- ```USE_UID_FROM``` Instead of passing in the UID the docker container uses the UID this file/directory belongs to
+- ```BUILD_USER_HOME``` the home directory of the ```BUILD_USER```
+
+If you don't pass in any of these environment variables the docker container will switch to a mode where ```BUILD_USER``` is ```builduser```, ```BUILD_USER_HOME``` is ```/workspace``` and ```BUILD_USER_UID``` is determined by the user that is owner of ```/workspace```. 
+
+In my CI environment ([Jenkins](https://www.jenkins.io/)) I use the following: 
+
+```docker run --rm -i -e BUILD_USER=builduser -e BUILD_USER_UID=$(id -u) -e BUILD_USER_HOME=/home/builduser -w /home/builduser -v $WORKSPACE:/home/builduser -v /var/lib/jenkins/download_cache:/home/builduser/dl pfichtner/freetz```
+
 ## Screencast
 Here's a screencast where Freetz(-NG) is checked out and menuconfig and make are run in the container
 <a href="http://pfichtner.github.io/pfichtner-freetz/checkout-on-host"><img src="https://pfichtner.github.io/pfichtner-freetz/asciinema-poster.png" /></a>
