@@ -36,8 +36,8 @@ fi
 
 DEFAULT_SHELL=`getent passwd $BUILD_USER | cut -f 7 -d':'`
 if [ `id -u` -eq 0 ]; then
-	[ "$#" -gt 0 ] && exec gosu "$BUILD_USER" "$@" || exec gosu "$BUILD_USER" "$DEFAULT_SHELL" -l
+	[ "$#" -gt 0 ] && exec gosu "$BUILD_USER" "$@" || exec gosu "$BUILD_USER" "$DEFAULT_SHELL"
 else
-	[ "$#" -gt 0 ] && exec "$@" || exec "$DEFAULT_SHELL" -l
+	[ "$#" -gt 0 ] && exec "$@" || exec "$DEFAULT_SHELL"
 fi
 
