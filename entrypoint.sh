@@ -25,7 +25,7 @@ if [ `id -u` -eq 0 ]; then
 	[ -z "$BUILD_USER_HOME" ] && BUILD_USER_HOME=/home/$BUILD_USER
 
 	CMD="useradd -G sudo -s /bin/bash -d $BUILD_USER_HOME"
-	[ ! -d "$BUILD_USER_HOME" ] && CMD="$CMD -m"
+	[ -d "$BUILD_USER_HOME" ] && CMD="$CMD -M" || CMD="$CMD -m"
 	[ -n "$BUILD_USER_UID" ] && CMD="$CMD -u $BUILD_USER_UID"
 
 	CMD="$CMD $BUILD_USER"
