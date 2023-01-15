@@ -20,15 +20,15 @@ jobs:
         key: curlcontent-${{ runner.os }}-${{ github.run_id }}
         restore-keys: curlcontent-${{ runner.os }}
     - name: Run generate-prereqs.sh
-      run: bash scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES.md" ~/.cache provisioning
+      run: bash scripts/generate-prerequisites.sh "https://github.com/Freetz-NG/freetz-ng/tree/master/docs/PREREQUISITES" ~/.cache provisioning
     - name: set ETAG env
-      run: echo "ETAG=$(cat ~/.cache/PREREQUISITES.md.etag | tr -d '\"')" >> $GITHUB_ENV
+      run: echo "ETAG=$(cat ~/.cache/PREREQUISITES.etag | tr -d '\"')" >> $GITHUB_ENV
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4
       with:
         # token is necessary so that the PR can be commented by another GHA workflow
         token: ${{ secrets.PR_PAT }}
-        title: 'https://github.com/Freetz-NG/freetz-ng/blob/master/docs/PREREQUISITES.md was updated'
+        title: 'https://github.com/Freetz-NG/freetz-ng/blob/master/docs/PREREQUISITES was updated'
         branch: create-pull-request/patch-${{ env.ETAG }}
         commit-message: "Update in upstream content"
         delete-branch: true
