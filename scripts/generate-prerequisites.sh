@@ -21,7 +21,7 @@ content() {
 	# find relevant section (ignore all lines before)
 	sed -n "/$DISTRO_ENTRY/,\$p" | \
 	# find content between "```"
-	sed -n '/```/{:loop n; /```/q; p; b loop}'
+	sed -n '/```/{:loop n; /```/q; p; b loop}' | sed ':a;N;$!ba;s/\\\n//g' | sed 's/[[:space:]]\+/ /g'
 }
 
 linesToJsonArray() {
