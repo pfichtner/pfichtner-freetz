@@ -104,7 +104,7 @@ FEDORA_PATTERN='^sudo dnf -y install '
 writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:22.04" "$OVERWRITE" ' - Ubuntu 22'     "$UBUNTU_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:20.04" "$OVERWRITE" ' - Ubuntu 20'     "$UBUNTU_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:18.04" "$OVERWRITE" ' - Ubuntu 18'     "$UBUNTU_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:16.04" "$OVERWRITE" ' - Ubuntu 16'     "$UBUNTU_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:16.04" "$OVERWRITE" ' - Ubuntu 15\/16' "$UBUNTU_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:14.04" "$OVERWRITE" ' - Ubuntu 14'     "$UBUNTU_PATTERN"
 
 writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:11"    "$OVERWRITE" ' - Debian 11'     "$DEBIAN_PATTERN"
