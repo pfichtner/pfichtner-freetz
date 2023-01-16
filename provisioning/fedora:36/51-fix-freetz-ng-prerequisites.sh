@@ -1,14 +1,13 @@
-# program     rpcgen                 FREETZ_PACKAGE_NFS_UTILS FREETZ_PACKAGE_AUTOFS
-# program     javac                  FREETZ_PACKAGE_CLASSPATH
-
 error() {
 	echo "$1"
 	exit 1
 }
 
-expectToBeAbsent() {
-	dnf list installed "$1" >/dev/null && error "$1 was expected to be absent but was present"
+expectToBePresent() {
+	dnf list installed "$1" >/dev/null 2>&1 || error "$1 was expected to be present but was absent"
 }
 
-update-alternatives --install /usr/bin/javac javac /usr/bin/ecj 20
+expectToBeAbsent() {
+	dnf list installed "$1" >/dev/null 2>&1 && error "$1 was expected to be absent but was present"
+}
 
