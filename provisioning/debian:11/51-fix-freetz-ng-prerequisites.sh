@@ -11,7 +11,3 @@ expectToBeAbsent() {
 	dpkg -l "$1" && error "$1 was expected to be absent but was present"
 }
 
-expectToBeAbsent libxml2-dev
-expectToBeAbsent java-wrappers
-apt-get -y install libxml2-dev java-wrappers
-
