@@ -8,9 +8,8 @@ ARG PROVISION_DIR=/tmp/${PARENT}
 ADD provisioning/${PARENT} ${PROVISION_DIR}
 ADD provisioning/files ${PROVISION_DIR}/files
 ADD provisioning/scripts ${PROVISION_DIR}/scripts
-ARG DEBIAN_FRONTEND=noninteractive 
 WORKDIR ${PROVISION_DIR}
-RUN for SCRIPT in ${PROVISION_DIR}/*.sh; do bash $SCRIPT || exit $?; done && rm -rf ${PROVISION_DIR}
+RUN bash -c 'for SCRIPT in ${PROVISION_DIR}/*.sh; do source $SCRIPT || exit $?; done && rm -rf ${PROVISION_DIR}'
 
 # if running in podman we have to create a default user in the image since we have no root priviliges to do in ENTRYPOINT
 RUN useradd -G sudo -s /bin/bash -d /workspace -m builduser
