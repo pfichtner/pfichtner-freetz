@@ -9,7 +9,7 @@ ADD provisioning/${PARENT} ${PROVISION_DIR}
 ADD provisioning/files ${PROVISION_DIR}/files
 ADD provisioning/scripts ${PROVISION_DIR}/scripts
 WORKDIR ${PROVISION_DIR}
-RUN ([ -r "$PROVISION_DIR}/ENVS.sh" ] && eval $(bash ${PROVISION_DIR}/ENVS.sh)); for SCRIPT in ${PROVISION_DIR}/*.sh; do (echo set -e && cat $SCRIPT) | bash || exit $?; done && rm -rf ${PROVISION_DIR}
+RUN [ -r "${PROVISION_DIR}/envs" ] && export $(cat ${PROVISION_DIR}/envs | xargs); for SCRIPT in ${PROVISION_DIR}/*.sh; do (echo set -e && cat $SCRIPT) | bash || exit $?; done && rm -rf ${PROVISION_DIR}
 
 # if running in podman we have to create a default user in the image since we have no root priviliges to do in ENTRYPOINT
 RUN useradd -G sudo -s /bin/bash -d /workspace -m builduser
