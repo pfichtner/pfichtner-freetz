@@ -18,8 +18,8 @@
  		   printf "%s: command not found\n" "$1" >&2
  		   return 127
 
---- /usr/lib/python3/dist-packages/CommandNotFound/CommandNotFound.py   2020-04-06 19:52:20.000000000 +0000
-+++ /usr/lib/python3/dist-packages/CommandNotFound/CommandNotFound.py   2022-02-13 12:02:03.142607889 +0000
+--- /usr/share/command-not-found/CommandNotFound/CommandNotFound.py   2020-04-06 19:52:20.000000000 +0000
++++ /usr/share/command-not-found/CommandNotFound/CommandNotFound.py   2022-02-13 12:02:03.142607889 +0000
 @@ -150,11 +150,13 @@
          return sources_list
 
