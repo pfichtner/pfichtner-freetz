@@ -74,7 +74,7 @@ You can pass the following environment variables (using docker's ```-e``` parame
 
 If you don't pass in any of these environment variables the docker container will switch to a mode where ```BUILD_USER``` is ```builduser```, ```BUILD_USER_HOME``` is ```/workspace``` and ```BUILD_USER_UID``` is determined by the user that is owner of ```/workspace```. 
 
-- ```AUTOINSTALL_PREREQUISITES``` By default Freetz-NG's prerequisites check is run and if there are missing prerequisites they get installed automatically. So even if the image is not uptodate you always should have a properly working build environment with all prerequisites installed. This feature will work only if the current working directory (```-w/--workdir```) contains a checked-out Freetz-NG. If Freetz-NG's script is not found this step is silently skipped as if it had been turned off.  If you want to disable this feature set the environment variable to ```n```. 
+- ```AUTOINSTALL_PREREQUISITES``` By default Freetz-NG's prerequisites check is run and if there are missing prerequisites they get installed automatically. So even if the image is not uptodate you always should have a properly working build environment with all prerequisites installed. This feature will work only if the current working directory (```-w/--workdir```) contains a checked-out Freetz-NG. If Freetz-NG's script is not found this step is silently skipped as if it had been disabled. If you want to disable this feature in general set the environment variable to ```n```. 
 This feature gets available with pfichtner-freetz:0.3.4
 
 In my CI environment ([Jenkins](https://www.jenkins.io/)) I use the following: 
