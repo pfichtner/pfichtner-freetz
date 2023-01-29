@@ -11,6 +11,18 @@ setToDefaults() {
 	BUILD_USER="$DEFAULT_BUILD_USER" && BUILD_USER_HOME='/workspace'
 }
 
+
+autoInstallPrerequisites() {
+	TOOL=tools/prerequisites
+
+	[ -x "$TOOL" ] || return
+	grep -qE 'Usage:.*(check.*install|install.*check)' "$TOOL" || return
+
+	"$TOOL" check || "$TOOL" install -y
+}
+
+
+
 # for backwards compatibility
 [ -z "$BUILD_USER" ] && [ -z "$BUILD_USER_HOME" ] && [ -z "$BUILD_USER_UID" ] && setToDefaults && USE_UID_FROM="$BUILD_USER_HOME" && cd "$BUILD_USER_HOME"
 
@@ -32,6 +44,17 @@ if [ `id -u` -eq 0 ]; then
 	# remove the default builduser created in Dockerfile that exists in image
 	userdel "$DEFAULT_BUILD_USER"
 	eval "$CMD"
+fi
+
+# if there are missing prerequisites we try to install the via tools/prerequisites
+if [ "${AUTOINSTALL_PREREQUISITES}" != 'n' ]; then
+	export -f autoInstallPrerequisites
+	if [ `id -u` -eq 0 ]; then
+		su "$BUILD_USER" -c autoInstallPrerequisites || true
+	else
+		autoInstallPrerequisites || true
+	fi
+	unset autoInstallPrerequisites
 fi
 
 DEFAULT_SHELL=`getent passwd $BUILD_USER | cut -f 7 -d':'`
