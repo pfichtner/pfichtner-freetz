@@ -39,6 +39,7 @@ if [ `id -u` -eq 0 ]; then
 	CMD="useradd -G sudo -s /bin/bash -d $BUILD_USER_HOME"
 	[ -d "$BUILD_USER_HOME" ] && CMD="$CMD -M" || CMD="$CMD -m"
 	[ -n "$BUILD_USER_UID" ] && CMD="$CMD -u $BUILD_USER_UID"
+	[ -n "$BUILD_USER_GID" ] && CMD="$CMD -g $BUILD_USER_GID" && (getent group "$BUILD_USER_GID" || groupadd "$BUILD_USER_GID" "$BUILD_USER")
 
 	CMD="$CMD $BUILD_USER"
 	# remove the default builduser created in Dockerfile that exists in image
