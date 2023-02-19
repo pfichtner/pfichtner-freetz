@@ -36,15 +36,15 @@ if [ `id -u` -eq 0 ]; then
 	# better read HOME/DHOME from /etc/default/useradd /etc/adduser.conf
 	[ -z "$BUILD_USER_HOME" ] && BUILD_USER_HOME=/home/$BUILD_USER
 
-	CMD="useradd -G sudo -s /bin/bash -d $BUILD_USER_HOME"
-	[ -d "$BUILD_USER_HOME" ] && CMD="$CMD -M" || CMD="$CMD -m"
-	[ -n "$BUILD_USER_UID" ] && CMD="$CMD -u $BUILD_USER_UID"
-	[ -n "$BUILD_USER_GID" ] && CMD="$CMD -g $BUILD_USER_GID" && (getent group "$BUILD_USER_GID" || groupadd "$BUILD_USER_GID" "$BUILD_USER")
+	USERADD="useradd -G sudo -s /bin/bash -d $BUILD_USER_HOME"
+	[ -d "$BUILD_USER_HOME" ] && USERADD="$USERADD -M" || USERADD="$USERADD -m"
+	[ -n "$BUILD_USER_UID" ] && USERADD="$USERADD -u $BUILD_USER_UID"
+	[ -n "$BUILD_USER_GID" ] && USERADD="$USERADD -g $BUILD_USER_GID" && (getent group "$BUILD_USER_GID" || groupadd "$BUILD_USER_GID" "$BUILD_USER")
 
-	CMD="$CMD $BUILD_USER"
+	USERADD="$USERADD $BUILD_USER"
 	# remove the default builduser created in Dockerfile that exists in image
 	userdel "$DEFAULT_BUILD_USER"
-	eval "$CMD"
+	eval "$USERADD"
 fi
 
 # if there are missing prerequisites we try to install the via tools/prerequisites
