@@ -24,7 +24,7 @@ jobs:
     - name: set ETAG env
       run: echo "ETAG=$(cat ~/.cache/PREREQUISITES.md.etag | tr -d '\"')" >> $GITHUB_ENV
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v4
+      uses: peter-evans/create-pull-request@v5
       with:
         # token is necessary so that the PR can be commented by another GHA workflow
         token: ${{ secrets.PR_PAT }}
