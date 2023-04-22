@@ -1,0 +1,48 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json
+{
+  "name": "FreetzBuild",
+  "build": {
+    // vscode shoul use pre-build container, this is just a wrapper
+    "dockerfile": "Dockerfile"
+  },
+  "initializeCommand": "docker ps -a --format '{{.Names}}' | grep -q vc_freetz-1 || docker run --name vc_freetz-1 vc_freetz:0.0.1",
+  // "${containerEnv:PATH}:
+  //"workspaceMount": "source=${localWorkspaceFolder},target=/workspace/pfichtner-freetz,type=bind",
+  //"workspaceMount": "source=vc_freetz-1_test,target=/workspace,type=volume",
+  "workspaceFolder": "/workspace",
+  //mounts
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Set *default* container specific settings.json values on container create.
+      "settings": {
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
+          }
+        },
+        "editor.formatOnPaste": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "files.trimTrailingWhitespace": true
+      },
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "ms-vscode.cpptools",
+        "dbaeumer.vscode-eslint",
+        "EditorConfig.EditorConfig"
+      ]
+    }
+  },
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+  "runArgs": [
+    "--volumes-from=vc_freetz-1"
+  ],
+  // Use 'postCreateCommand' to run commands after the container is created.
+  //"java -version"
+  //"postCreateCommand": "mkdir -p $HOME/.m2 && ln -s $PWD/.m2/settings.xml $HOME/.m2/",
+  // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "builduser"
+}

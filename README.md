@@ -2,17 +2,17 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/pfichtner/freetz.svg?maxAge=604800)](https://hub.docker.com/r/pfichtner/freetz/)
 
 # pfichtner-freetz
-This is my version of a [Freetz(-NG)](https://github.com/Freetz-NG/freetz-ng) build environment. With this I am running builds to create various images (3270, 3370, 7570,7390, 7490, 7590) with various configs in a CI environment. 
+This is my version of a [Freetz(-NG)](https://github.com/Freetz-NG/freetz-ng) build environment. With this I am running builds to create various images (3270, 3370, 7570,7390, 7490, 7590) with various configs in a CI environment.
 
-## When and why to use it? 
+## When and why to use it?
 - You don't want to mess up your linux system with all those prerequisites needed to build Freetz(-NG)
 - You don't wan't to download a full featured virtual machine image (which if there are new prerequisites you have them to integrate on your own which perhaps was the reason you started using the virtual machine image)
 - The virtual machine image generates to much overhead (RAM/CPU/...)
 - You need (love) fast startup times (milliseconds compared to seconds/minutes)
 
-## How to use it? 
+## How to use it?
 ##### You could checkout inside a separate named volume (e.g. "freetz-workspace")
-With this approach the files are not stored inside the "pfichtner/freetz build container" but a separate volume: 
+With this approach the files are not stored inside the "pfichtner/freetz build container" but a separate volume:
 ```
 # start docker container (will start /bin/bash)
 docker run --rm -it -v freetz-workspace:/workspace pfichtner/freetz
@@ -20,9 +20,9 @@ docker run --rm -it -v freetz-workspace:/workspace pfichtner/freetz
 git clone https://github.com/Freetz-NG/freetz-ng.git
 ```
 
-##### You could checkout inside the pfichtner/freetz container 
-But if you delete the container (e.g. when updating to a newer version of it) you'll lose everything you put meanwhile in this container e.g. configs, (intermediate) build results! 
-The first time start looks like: 
+##### You could checkout inside the pfichtner/freetz container
+But if you delete the container (e.g. when updating to a newer version of it) you'll lose everything you put meanwhile in this container e.g. configs, (intermediate) build results!
+The first time start looks like:
 ```
 # start docker container (will start /bin/bash)
 docker run -it pfichtner/freetz
@@ -33,9 +33,9 @@ git clone https://github.com/Freetz-NG/freetz-ng.git
 After exiting the container the container is stopped. You can resume it via ```docker start -i <containerid>``` (you can determine the containerid by executing ```docker ps -a```)
 
 ##### You could mount a directory on the host system to use inside the container
-So all files checked out and generated during the build resides on the host system. 
+So all files checked out and generated during the build resides on the host system.
 
-To do this, "cd" into the directory with the checked out [Freetz(-NG)-repository](https://github.com/Freetz-NG/freetz-ng) and use the current directory ($PWD) as volume for the container and then execute the build there. Here comes the complete workflow:  
+To do this, "cd" into the directory with the checked out [Freetz(-NG)-repository](https://github.com/Freetz-NG/freetz-ng) and use the current directory ($PWD) as volume for the container and then execute the build there. Here comes the complete workflow:
 ```
 # necessary for the following clone
 umask 0022
@@ -47,9 +47,9 @@ cd freetz-ng
 docker run --rm -it -v $PWD:/workspace pfichtner/freetz
 ```
 (if you don't checkout Freetz(-NG) to the current directory replace $PWD with the path to the checked out repository)
-Please note that the filesystem where Freetz(-NG) has been checked out has to be case-sensitive! 
+Please note that the filesystem where Freetz(-NG) has been checked out has to be case-sensitive!
 
-**In all three cases you'll get a shell (bash) where you can work like your are in "a normal bash" like before, e.g. you now call call `make` then `make menuconfig` or any other command you like.** If you want to leave this shell, just type `exit` as usual. 
+**In all three cases you'll get a shell (bash) where you can work like your are in "a normal bash" like before, e.g. you now call call `make` then `make menuconfig` or any other command you like.** If you want to leave this shell, just type `exit` as usual.
 
 
 ### Docker command/options explained
@@ -68,16 +68,16 @@ Please note that the filesystem where Freetz(-NG) has been checked out has to be
 ## Environment variables
 You can pass the following environment variables (using docker's ```-e``` parameters)
 - ```BUILD_USER```  the username of the non-root user the entrypoint will switch to
-- ```BUILD_USER_UID``` the uid of the ```BUILD_USER```. This should be the UID of your current user so that all files are read/write using the same UID that the user started the container. So ```-e BUILD_USER_UID=$(id -u)``` is a good option. 
+- ```BUILD_USER_UID``` the uid of the ```BUILD_USER```. This should be the UID of your current user so that all files are read/write using the same UID that the user started the container. So ```-e BUILD_USER_UID=$(id -u)``` is a good option.
 - ```USE_UID_FROM``` Instead of passing in the UID the docker container uses the UID this file/directory belongs to
 - ```BUILD_USER_HOME``` the home directory of the ```BUILD_USER```
 
-If you don't pass in any of these environment variables the docker container will switch to a mode where ```BUILD_USER``` is ```builduser```, ```BUILD_USER_HOME``` is ```/workspace``` and ```BUILD_USER_UID``` is determined by the user that is owner of ```/workspace```. 
+If you don't pass in any of these environment variables the docker container will switch to a mode where ```BUILD_USER``` is ```builduser```, ```BUILD_USER_HOME``` is ```/workspace``` and ```BUILD_USER_UID``` is determined by the user that is owner of ```/workspace```.
 
-- ```AUTOINSTALL_PREREQUISITES``` By default Freetz-NG's prerequisites check is run and if there are missing prerequisites they get installed automatically. So even if the image is not uptodate you always should have a properly working build environment with all prerequisites installed. This feature will work only if the current working directory (```-w/--workdir```) contains a checked-out Freetz-NG. If Freetz-NG's script is not found this step is silently skipped as if it had been disabled. If you want to disable this feature in general set the environment variable to ```n```. 
+- ```AUTOINSTALL_PREREQUISITES``` By default Freetz-NG's prerequisites check is run and if there are missing prerequisites they get installed automatically. So even if the image is not uptodate you always should have a properly working build environment with all prerequisites installed. This feature will work only if the current working directory (```-w/--workdir```) contains a checked-out Freetz-NG. If Freetz-NG's script is not found this step is silently skipped as if it had been disabled. If you want to disable this feature in general set the environment variable to ```n```.
 This feature gets available with pfichtner-freetz:0.3.4
 
-In my CI environment ([Jenkins](https://www.jenkins.io/)) I use the following: 
+In my CI environment ([Jenkins](https://www.jenkins.io/)) I use the following:
 
 ```docker run --rm -i -e BUILD_USER=builduser -e BUILD_USER_UID=$(id -u) -e BUILD_USER_HOME=/home/builduser -w /home/builduser -v $WORKSPACE:/home/builduser -v /var/lib/jenkins/download_cache:/home/builduser/dl pfichtner/freetz```
 
@@ -100,7 +100,7 @@ And here's a screencast for this
 
 <a href="http://pfichtner.github.io/pfichtner-freetz/checkout-in-container"><img src="https://pfichtner.github.io/pfichtner-freetz/asciinema-poster.png" /></a>
 
-Of course in a CI environment you don't want to do ```menuconfig``` since it's a fully automated build. That's where I am using ```oldconfig```: 
+Of course in a CI environment you don't want to do ```menuconfig``` since it's a fully automated build. That's where I am using ```oldconfig```:
 ```
 docker run --rm -v $PWD:/workspace pfichtner/freetz /bin/bash -c "make oldconfig && make"
 ```
@@ -116,4 +116,37 @@ docker run --rm -v $PWD:/workspace pfichtner/freetz /bin/bash -c "make oldconfig
 pfichtner/freetz also runs using podman (which has the advantage due it's daemenless so you don't have to add users to any groups)
 ```
 podman run -u root --userns keep-id --rm -it -v $PWD:/workspace docker.io/pfichtner/freetz
+```
+
+## VOLUME Containers
+
+A volume container is build, started if not exits and stays in exited state.
+The volume is present until the volume container is kept.
+So you can build, remove, change your build environment (this project) independantly witout loosing previous downloaded sources / already build toolchain etc.
+You can have different build environments / volume containers in parallel.
+The volume container currently helds freetz sources, downloads, toolchain, etc.
+This could be seperated in different volume containers for disk space optimization.
+So you can also have diffent toolchain containers in parallel (named accordingly) to have toolchains for different targets (mips / arm / atom) in parallel.
+At least these folders were moved from source directory by symlinking.
+
+The images is held on the docker host, because output images are stored there.
+
+Config handling is currently a manual task. I keep different versions in images folder on the host, and just symlink the active one to .config in the freetz workspace, YMMV.
+
+Some scripts were added for conveniance.
+
+### run once:
+```
+./run build       # run this once to build the runtime image
+./run volume      # run this once to build volume image
+```
+
+```
+./run run         # run a build container
+// inside container
+scripts/freetz-init.sh    # init all non source dirs (once)
+// build as always:
+cd freetz-ng
+make menuconfig
+make
 ```
