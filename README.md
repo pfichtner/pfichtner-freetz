@@ -105,6 +105,9 @@ Of course in a CI environment you don't want to do ```menuconfig``` since it's a
 docker run --rm -v $PWD:/workspace pfichtner/freetz /bin/bash -c "make oldconfig && make"
 ```
 
+## Known problems
+If you encounter a problem when unpacking the image this could be caused by a prlimit for the docker container of maximum number of open files. Please add then ```--ulimit=...```, e.g. ```docker run --rm -it --ulimit nofile=262144:262144 -v $PWD:/workspace pfichtner/freetz```. You can verify the NOFILE limits by calling ```prlimit```on the host and inside the docker container. (see https://github.com/pfichtner/pfichtner-freetz/issues/37 for details)
+
 ## Some hints if you're new to docker
 - You can use docker on most linux/unix systems (and many other systems like Windows, too)
 - Docker should be installable via the package manager of your distribution (dkpg/apt, rpm, yum, ...)
