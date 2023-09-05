@@ -6,7 +6,7 @@ jobs:
   comment_pr:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Run scripts/dependency-diff.sh
       run: bash scripts/dependency-diff.sh provisioning >.dependency-diff.txt
     - name: Comment PR
