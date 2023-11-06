@@ -38,7 +38,12 @@ if [ `id -u` -eq 0 ]; then
 
 	USERADD="useradd -G sudo -s /bin/bash -d $BUILD_USER_HOME"
 	[ -d "$BUILD_USER_HOME" ] && USERADD="$USERADD -M" || USERADD="$USERADD -m"
-	[ -n "$BUILD_USER_UID" ] && USERADD="$USERADD -u $BUILD_USER_UID"
+	if [ -n "$BUILD_USER_UID" ]; then
+		USERADD="$USERADD -u $BUILD_USER_UID"
+		# delete a user if there is already a user with that UID
+		TMP_DEL_USER=`getent passwd $BUILD_USER_UID | cut -d':' -f1` && [ "$DEFAULT_BUILD_USER" != "$TMP_DEL_USER" ] && userdel $TMP_DEL_USER >/dev/null 2>/dev/null
+	fi
+
 	[ -n "$BUILD_USER_GID" ] && USERADD="$USERADD -g $BUILD_USER_GID" && (getent group "$BUILD_USER_GID" || groupadd "$BUILD_USER_GID" "$BUILD_USER")
 
 	USERADD="$USERADD $BUILD_USER"
