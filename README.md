@@ -112,11 +112,12 @@ If you encounter a problem when unpacking the image this could be caused by a pr
 - You can use docker on most linux/unix systems (and many other systems like Windows, too)
 - Docker should be installable via the package manager of your distribution (dkpg/apt, rpm, yum, ...)
 - When installing docker initially on your machine, the user you want to use docker for has to be member of the docker group ("docker" on ubuntu, could differ in other distros), so add the user to the "docker" group
-- If you start a image (better said container) the first time, the image is pulled from the remote docker repository ("dockerhub"). This could take a while but after that the image is cached on you machine and has not to be downloaded again
+- If you start an image (better said container) for the first time, the image is pulled from the remote docker repository ("dockerhub"). This could take a while but after that the image is cached on you machine and has not to be downloaded again
 - If you want to update an image that already was downloaded you can use `docker pull pfichtner/freetz` to check for a newer image and update it
+- When running on on a mac with arm cpu (M1/M2) pass ```--platform linux/amd64``` as additional argument to use x86 image
 
 ## Alternative to docker (podman)
-pfichtner/freetz also runs using podman (which has the advantage due it's daemenless so you don't have to add users to any groups)
+pfichtner/freetz also runs using podman (which has advantages due to being daemenless so you don't have to add users to any groups)
 ```
 podman run -u root --userns keep-id --rm -it -v $PWD:/workspace docker.io/pfichtner/freetz
 ```
