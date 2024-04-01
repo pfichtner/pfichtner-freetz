@@ -30,7 +30,7 @@ jobs:
       - name: Run scripts/dependency-diff.sh
         run: bash scripts/dependency-diff.sh provisioning >provisioning/dependency-diff.md
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
