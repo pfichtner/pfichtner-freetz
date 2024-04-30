@@ -1,2 +1,0 @@
-dnf -y update
-
