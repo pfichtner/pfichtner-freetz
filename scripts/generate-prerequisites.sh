@@ -109,7 +109,7 @@ writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:18.04" "$OVERWRITE" ' - Ubuntu 1
 writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:16.04" "$OVERWRITE" ' - Ubuntu 15\/16'     "$UBUNTU_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:14.04" "$OVERWRITE" ' - Ubuntu 14'         "$UBUNTU_PATTERN"
 
-writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:11"    "$OVERWRITE" ' - Debian 12'         "$DEBIAN_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:12"    "$OVERWRITE" ' - Debian 12'         "$DEBIAN_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:11"    "$OVERWRITE" ' - Debian 11'         "$DEBIAN_PATTERN"
 
 writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:40"    "$OVERWRITE" ' - Fedora 40'         "$FEDORA_PATTERN"
