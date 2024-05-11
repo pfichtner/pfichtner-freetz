@@ -4,6 +4,11 @@ HTTP_SOURCE=$1
 CACHE=$2
 TARGET=$3
 
+fail() {
+    echo "Error: $1" >&2
+    exit 1
+}
+
 deps() {
 	CONTENT="$1"
 	FILTER="$2"
@@ -45,7 +50,9 @@ writeDepsJsonFile() {
 
 	[ -d $(dirname "$TARGET_FILE") ] || mkdir -p $(dirname "$TARGET_FILE")
 	
- 	CONTENT=$(content "$SOURCE_FILE" "$DISTRO_ENTRY") 
+	CONTENT=$(content "$SOURCE_FILE" "$DISTRO_ENTRY")
+	[ -z "$CONTENT" ] && fail "No content for $DISTRO_ENTRY"
+
 	DEPS=$(deps "$CONTENT" "$PATTERN")
 	PACKAGES=$(linesToJsonArray "$DEPS")
 
@@ -71,6 +78,7 @@ writePackageFile() {
 
 	PREFIX='sudo() { eval ${*@Q}; }'
 	CONTENT=$(content "$SOURCE_FILE" "$DISTRO_ENTRY")
+	[ -z "$CONTENT" ] && fail "No content for $DISTRO_ENTRY"
 	echo -e "$PREFIX\n$CONTENT\n" >"$TARGET_FILE"
 }
 
