@@ -1,3 +1,3 @@
 # for convenience inside the container
-apt-get -y install vim-gtk3
+apt-get -y install vim
 
