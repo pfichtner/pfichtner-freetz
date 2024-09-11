@@ -52,7 +52,7 @@ if [ `id -u` -eq 0 ]; then
 	eval "$USERADD"
 fi
 
-# if there are missing prerequisites we try to install the via tools/prerequisites
+# if there are missing prerequisites we try to install them via tools/prerequisites
 if [ "${AUTOINSTALL_PREREQUISITES}" != 'n' ]; then
 	export -f autoInstallPrerequisites
 	if [ `id -u` -eq 0 ]; then
