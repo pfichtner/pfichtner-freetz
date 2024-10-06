@@ -41,7 +41,7 @@ if [ `id -u` -eq 0 ]; then
 	if [ -n "$BUILD_USER_UID" ]; then
 		USERADD="$USERADD -u $BUILD_USER_UID"
 		# delete a user if there is already a user with that UID
-		TMP_DEL_USER=`getent passwd $BUILD_USER_UID | cut -d':' -f1` && [ "$DEFAULT_BUILD_USER" != "$TMP_DEL_USER" ] && userdel $TMP_DEL_USER >/dev/null 2>/dev/null
+		TMP_DEL_USER=`getent passwd $BUILD_USER_UID | cut -d':' -f1` && [ -n "$TMP_DEL_USER" ] && [ "$DEFAULT_BUILD_USER" != "$TMP_DEL_USER" ] && userdel $TMP_DEL_USER >/dev/null 2>/dev/null
 	fi
 
 	[ -n "$BUILD_USER_GID" ] && USERADD="$USERADD -g $BUILD_USER_GID" && (getent group "$BUILD_USER_GID" || groupadd "$BUILD_USER_GID" "$BUILD_USER")
