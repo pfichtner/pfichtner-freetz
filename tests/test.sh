@@ -58,6 +58,14 @@ teardown() {
   [ "$output" == $'/home/builduser\ntest.txt' ]
 }
 
+@test "volume mount with workdir, force / (does not work)" {
+  touch "$TMP_DIR/test.txt"
+  output=$(echo 'pwd;ls;exit' | docker run --rm -i -v $TMP_DIR:/workspace -w / $IMAGE)
+  echo "$output"
+  # [ "$output" == $'/' ] # <-- should be this but we cannot differ in entrypoint between "no -w" and "-w /"
+  [ "$output" == $'/workspace\ntest.txt' ]
+}
+
 @test "volume mount with workdir and homedir" {
   touch "$TMP_DIR/test.txt"
   output=$(echo 'pwd;ls;exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -w /home/builduser -e BUILD_USER_HOME=/home/builduser $IMAGE)
