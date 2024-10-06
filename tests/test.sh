@@ -2,6 +2,18 @@
 
 IMAGE=pfichtner/freetz
 
+
+# Global variable to store the path of the temporary directory
+TMP_DIR=""
+
+setup() {
+  TMP_DIR=$(mktemp -d)  # Create a temporary directory
+}
+
+teardown() {
+  [[ -d "$TMP_DIR" ]] && rm -rf "$TMP_DIR"
+}
+
 @test "without any args" {
   output=$(echo 'pwd;ls -l;whoami;id -u;exit' | docker run --rm -i $IMAGE)
   echo "$output"
@@ -30,6 +42,43 @@ IMAGE=pfichtner/freetz
   output=$(echo 'pwd;whoami;id -u;exit' | docker run --rm -i -e BUILD_USER_HOME=/home/someOtherHome $IMAGE)
   echo "$output"
   [ "$output" == $'/\nbuilduser\n1000' ]
+}
+
+@test "volume mount w/o workdir" {
+  touch "$TMP_DIR/test.txt"
+  output=$(echo 'pwd;ls;exit' | docker run --rm -i -v $TMP_DIR:/workspace $IMAGE)
+  echo "$output"
+  [ "$output" == $'/workspace\ntest.txt' ]
+}
+
+@test "volume mount with workdir" {
+  touch "$TMP_DIR/test.txt"
+  output=$(echo 'pwd;ls;exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -w /home/builduser $IMAGE)
+  echo "$output"
+  [ "$output" == $'/home/builduser\ntest.txt' ]
+}
+
+@test "volume mount with workdir and homedir" {
+  touch "$TMP_DIR/test.txt"
+  output=$(echo 'pwd;ls;exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -w /home/builduser -e BUILD_USER_HOME=/home/builduser $IMAGE)
+  echo "$output"
+  [ "$output" == $'/home/builduser\ntest.txt' ]
+}
+
+# ---------------------------------------------------------------------------------------------------------
+
+@test "use UID from volume w/o workdir" {
+  touch "$TMP_DIR/test.txt"
+  output=$(echo 'pwd;ls;exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -e USE_UID_FROM=/home/builduser $IMAGE)
+  echo "$output"
+  [ "$output" == $'/workspace' ] # no test.txt since we volume mounted /home/builduser and current dir is workspace here
+}
+
+@test "use UID from volume with workdir" {
+  touch "$TMP_DIR/test.txt"
+  output=$(echo 'pwd;ls;exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -e USE_UID_FROM=/home/builduser -w /home/builduser $IMAGE)
+  echo "$output"
+  [ "$output" == $'/home/builduser\ntest.txt' ]
 }
 
 # ---------------------------------------------------------------------------------------------------------
