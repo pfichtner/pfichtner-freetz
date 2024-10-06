@@ -83,6 +83,28 @@ teardown() {
 
 # ---------------------------------------------------------------------------------------------------------
 
+@test "execs tools/prerequisites if existent" {
+  mkdir "$TMP_DIR/tools"
+  echo -e '#!/bin/bash\necho $0 $UID\n# echo Usage: $0 [ check | list | show [os] | install [-y] [os] ]' >"$TMP_DIR/tools/prerequisites"
+  chmod +x "$TMP_DIR/tools/prerequisites"
+  cat "$TMP_DIR/tools/prerequisites"
+  output=$(echo 'exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -w /home/builduser $IMAGE)
+  echo "$output"
+  [ "$output" == $'tools/prerequisites 1000' ]
+}
+
+@test "does not exec tools/prerequisites if existent but disabled" {
+  mkdir "$TMP_DIR/tools"
+  echo -e '#!/bin/bash\necho $0 $UID\n# echo Usage: $0 [ check | list | show [os] | install [-y] [os] ]' >"$TMP_DIR/tools/prerequisites"
+  chmod +x "$TMP_DIR/tools/prerequisites"
+  cat "$TMP_DIR/tools/prerequisites"
+  output=$(echo 'exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -w /home/builduser -e AUTOINSTALL_PREREQUISITES=n $IMAGE)
+  echo "$output"
+  [ "$output" == $'' ]
+}
+
+# ---------------------------------------------------------------------------------------------------------
+
 @test "BUILD_USER_UID set to nobody (user has to get removed)" {
   output=$(echo 'pwd;whoami;id -u;exit' | docker run --rm -i -e BUILD_USER_UID=65534 $IMAGE)
   echo "$output"
