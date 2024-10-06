@@ -119,5 +119,5 @@ If you encounter a problem when unpacking the image this could be caused by a pr
 ## Alternative to docker (podman)
 pfichtner/freetz also runs using podman (which has advantages due to being daemenless so you don't have to add users to any groups)
 ```
-podman run -u root --userns keep-id --rm -it -v $PWD:/workspace docker.io/pfichtner/freetz
+podman run --userns keep-id --rm -it -v $PWD:/workspace docker.io/pfichtner/freetz
 ```
