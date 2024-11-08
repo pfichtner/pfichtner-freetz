@@ -119,6 +119,7 @@ writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:14.04" "$OVERWRITE" ' - Ubuntu 1
 writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:12"    "$OVERWRITE" ' - Debian 12'         "$DEBIAN_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:11"    "$OVERWRITE" ' - Debian 11'         "$DEBIAN_PATTERN"
 
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:41"    "$OVERWRITE" ' - Fedora 41'         "$FEDORA_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:40"    "$OVERWRITE" ' - Fedora 40'         "$FEDORA_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:39"    "$OVERWRITE" ' - Fedora 37\/38\/39' "$FEDORA_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:38"    "$OVERWRITE" ' - Fedora 37\/38\/39' "$FEDORA_PATTERN"
