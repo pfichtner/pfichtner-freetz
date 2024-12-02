@@ -1,4 +1,6 @@
 [![Publish Docker image](https://github.com/pfichtner/pfichtner-freetz/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/pfichtner/pfichtner-freetz/actions/workflows/docker-publish.yml)
+![Docker Image Version](https://img.shields.io/docker/v/pfichtner/pfichtner-freetz)
+![Docker Image Size](https://img.shields.io/docker/image-size/pfichtner/pfichtner-freetz)
 [![Docker Pulls](https://img.shields.io/docker/pulls/pfichtner/freetz.svg?maxAge=604800)](https://hub.docker.com/r/pfichtner/freetz/)
 
 # pfichtner-freetz
