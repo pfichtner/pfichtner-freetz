@@ -1,8 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: Publish Docker image
 
 on:
@@ -11,30 +6,53 @@ on:
 
 jobs:
   push_to_registry:
-    name: Push Docker image to Docker Hub
+    name: Build, Test, and Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    env:
+      BUILD_ARGS: |
+        PARENT=ubuntu:20.04  # Centralized definition of build arguments
+
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
-      
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: pfichtner/freetz
-      
-      - name: Build and push Docker image
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false  # Build the image but do not push yet
+          build-args: ${{ env.BUILD_ARGS }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Setup Bats and bats libs
+        id: setup-bats
+        uses: bats-core/bats-action@3.0.0
+
+      - name: My test
+        shell: bash
+        env:
+         BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+        run: bats tests/test.sh ${{ steps.meta.outputs.tags }}
+
+      - name: Push Docker image to Docker Hub
+        if: success()  # Ensure this step runs only if the tests pass
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          build-args: |
-              PARENT=ubuntu:20.04
+          build-args: ${{ env.BUILD_ARGS }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
