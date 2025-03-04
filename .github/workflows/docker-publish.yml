@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUILD_ARGS: |
-        PARENT=ubuntu:24.04  # Centralized definition of build arguments
+        PARENT=ubuntu:24.04
 
     steps:
       - name: Check out the repo
