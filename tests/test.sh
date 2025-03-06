@@ -52,6 +52,7 @@ teardown() {
 }
 
 @test "volume mount with workdir" {
+  [[ "$(id -u)" -eq 1000 ]] || skip "UID is not 1000"
   touch "$TMP_DIR/test.txt"
   output=$(echo 'pwd;ls;exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -w /home/builduser $IMAGE)
   echo "$output"
@@ -67,6 +68,7 @@ teardown() {
 }
 
 @test "volume mount with workdir and homedir" {
+  [[ "$(id -u)" -eq 1000 ]] || skip "UID is not 1000"
   touch "$TMP_DIR/test.txt"
   output=$(echo 'pwd;ls;exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -w /home/builduser -e BUILD_USER_HOME=/home/builduser $IMAGE)
   echo "$output"
@@ -76,6 +78,7 @@ teardown() {
 # ---------------------------------------------------------------------------------------------------------
 
 @test "use UID from volume w/o workdir" {
+  [[ "$(id -u)" -eq 1000 ]] || skip "UID is not 1000"
   touch "$TMP_DIR/test.txt"
   output=$(echo 'pwd;ls;exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -e USE_UID_FROM=/home/builduser $IMAGE)
   echo "$output"
@@ -96,9 +99,9 @@ teardown() {
   echo -e '#!/bin/bash\necho $0 $UID\n# echo Usage: $0 [ check | list | show [os] | install [-y] [os] ]' >"$TMP_DIR/tools/prerequisites"
   chmod +x "$TMP_DIR/tools/prerequisites"
   cat "$TMP_DIR/tools/prerequisites"
-  output=$(echo 'exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -w /home/builduser $IMAGE)
+  output=$(echo 'exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -e USE_UID_FROM=/home/builduser -w /home/builduser $IMAGE)
   echo "$output"
-  [ "$output" == $'tools/prerequisites 1000' ]
+  [ "$output" == $'tools/prerequisites '$UID ]
 }
 
 @test "does not exec tools/prerequisites if existent but disabled" {
@@ -106,7 +109,7 @@ teardown() {
   echo -e '#!/bin/bash\necho $0 $UID\n# echo Usage: $0 [ check | list | show [os] | install [-y] [os] ]' >"$TMP_DIR/tools/prerequisites"
   chmod +x "$TMP_DIR/tools/prerequisites"
   cat "$TMP_DIR/tools/prerequisites"
-  output=$(echo 'exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -w /home/builduser -e AUTOINSTALL_PREREQUISITES=n $IMAGE)
+  output=$(echo 'exit' | docker run --rm -i -v $TMP_DIR:/home/builduser -e USE_UID_FROM=/home/builduser -w /home/builduser -e AUTOINSTALL_PREREQUISITES=n $IMAGE)
   echo "$output"
   [ "$output" == $'' ]
 }
