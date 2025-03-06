@@ -41,11 +41,11 @@ jobs:
         id: setup-bats
         uses: bats-core/bats-action@3.0.0
 
-      - name: My test
+      - name: Run Tests
         shell: bash
         env:
          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
-        run: bats tests/test.sh ${{ steps.meta.outputs.tags }}
+        run: bats tests/test.sh
 
       - name: Push Docker image to Docker Hub
         if: success()  # Ensure this step runs only if the tests pass
