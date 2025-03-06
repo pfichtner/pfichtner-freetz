@@ -113,10 +113,15 @@ teardown() {
 
 # ---------------------------------------------------------------------------------------------------------
 
-@test "BUILD_USER_UID set to nobody (user has to get removed)" {
-  output=$(echo 'pwd;whoami;id -u;exit' | docker run --rm -i -e BUILD_USER_UID=65534 $IMAGE)
+@test "BUILD_USER_UID set to backup (user has to get removed)" {
+  # check if user with UID 34 and name backup really exist
+  output=$(echo 'getent passwd 34' | docker run --rm --entrypoint='' -i -e BUILD_USER_UID=34 $IMAGE /bin/bash)
   echo "$output"
-  [ "$output" == $'/\nbuilduser\n65534' ]
+  [ "$output" == $'backup:x:34:34:backup:/var/backups:/usr/sbin/nologin' ]
+
+  output=$(echo 'pwd;whoami;id -u;exit' | docker run --rm -i -e BUILD_USER_UID=34 $IMAGE)
+  echo "$output"
+  [ "$output" == $'/\nbuilduser\n34' ]
 }
 
 # ---------------------------------------------------------------------------------------------------------
