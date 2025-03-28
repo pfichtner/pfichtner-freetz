@@ -39,7 +39,7 @@ jobs:
 
       - name: Setup Bats and bats libs
         id: setup-bats
-        uses: bats-core/bats-action@3.0.0
+        uses: bats-core/bats-action@3.0.1
 
       - name: Run Tests
         shell: bash
