@@ -1,0 +1,47 @@
+--- /etc/bash.bashrc	2022-02-13 11:59:26.834438903 +0000
++++ /etc/bash.bashrc	2022-02-13 13:39:19.608917741 +0000
+@@ -59,10 +59,14 @@
+ 	        # check because c-n-f could've been removed in the meantime
+                 if [ -x /usr/lib/command-not-found ]; then
+ 		   /usr/lib/command-not-found -- "$1"
+-                   return $?
++                   RC=$?
++                   which $1 >/dev/null && $@
++                   return $RC
+                 elif [ -x /usr/share/command-not-found/command-not-found ]; then
+ 		   /usr/share/command-not-found/command-not-found -- "$1"
+-                   return $?
++                   RC=$?
++                   which $1 >/dev/null && $@
++                   return $RC
+ 		else
+ 		   printf "%s: command not found\n" "$1" >&2
+ 		   return 127
+
+--- /usr/share/command-not-found/CommandNotFound/CommandNotFound.py   2020-04-06 19:52:20.000000000 +0000
++++ /usr/share/command-not-found/CommandNotFound/CommandNotFound.py   2022-02-13 12:02:03.142607889 +0000
+@@ -150,11 +150,13 @@
+         return sources_list
+
+     def install_prompt(self, package_name):
+-        if not "COMMAND_NOT_FOUND_INSTALL_PROMPT" in os.environ:
++        if not "COMMAND_NOT_FOUND_INSTALL_PROMPT" in os.environ and not "COMMAND_NOT_FOUND_AUTOINSTALL" in os.environ:
+             return
+         if package_name:
+             prompt = _("Do you want to install it? (N/y)")
+-            if sys.version >= '3':
++            if "COMMAND_NOT_FOUND_AUTOINSTALL" in os.environ:
++                answer = "y"
++            elif sys.version >= '3':
+                 answer = input(prompt)
+                 raw_input = lambda x: x  # pyflakes
+             else:
+@@ -167,7 +169,7 @@
+                     command_prefix = ""
+                 else:
+                     command_prefix = "sudo "
+-                install_command = "%sapt install %s" % (command_prefix, package_name)
++                install_command = "%sapt install -y %s" % (command_prefix, package_name)
+                 print("%s" % install_command, file=sys.stdout)
+                 subprocess.call(install_command.split(), shell=False)
+
