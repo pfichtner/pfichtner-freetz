@@ -8,6 +8,7 @@ This is my version of a [Freetz(-NG)](https://github.com/Freetz-NG/freetz-ng) bu
 
 ## When and why to use it? 
 - You don't want to mess up your linux system with all those prerequisites needed to build Freetz(-NG)
+- You're using Windows: the easiest way to get a Freetz(-NG) build environment is by using the Docker image with WSL2.
 - You don't wan't to download a full featured virtual machine image (which if there are new prerequisites you have them to integrate on your own which perhaps was the reason you started using the virtual machine image)
 - The virtual machine image generates to much overhead (RAM/CPU/...)
 - You need (love) fast startup times (milliseconds compared to seconds/minutes)
