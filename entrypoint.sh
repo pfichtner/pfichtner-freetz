@@ -3,8 +3,6 @@ set -e
 
 [ "${COMMAND_NOT_FOUND_AUTOINSTALL}" = 'n' ] && unset COMMAND_NOT_FOUND_AUTOINSTALL || export COMMAND_NOT_FOUND_AUTOINSTALL=y
 
-umask 0022
-
 DEFAULT_BUILD_USER='builduser'
 
 setToDefaults() {

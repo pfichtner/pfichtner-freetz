@@ -40,8 +40,6 @@ So all files checked out and generated during the build resides on the host syst
 
 To do this, "cd" into the directory with the checked out [Freetz(-NG)-repository](https://github.com/Freetz-NG/freetz-ng) and use the current directory ($PWD) as volume for the container and then execute the build there. Here comes the complete workflow:  
 ```
-# necessary for the following clone
-umask 0022
 # clone (checkout) the remote repo
 git clone https://github.com/Freetz-NG/freetz-ng.git
 # cd into the cloned repo
