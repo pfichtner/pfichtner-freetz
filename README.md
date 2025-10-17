@@ -84,7 +84,7 @@ In my CI environment ([Jenkins](https://www.jenkins.io/)) I use the following:
 
 ## Screencast
 Here's a screencast where Freetz(-NG) is checked out and menuconfig and make are run in the container
-<a href="http://pfichtner.github.io/pfichtner-freetz/checkout-on-host"><img src="https://pfichtner.github.io/pfichtner-freetz/asciinema-poster.png" /></a>
+<a href="http://pfichtner.github.io/assets/pfichtner-freetz/checkout-on-host"><img src="https://pfichtner.github.io/assets/pfichtner-freetz/asciinema-poster.png" /></a>
 
 If you dont' want an interactive shell (bash) but run command directly you can pass them using `bash -c`
 ```
@@ -99,7 +99,7 @@ docker run --rm -v ~/some-empty-directory-for-freetz:/workspace pfichtner/freetz
 ```
 And here's a screencast for this
 
-<a href="http://pfichtner.github.io/pfichtner-freetz/checkout-in-container"><img src="https://pfichtner.github.io/pfichtner-freetz/asciinema-poster.png" /></a>
+<a href="http://pfichtner.github.io/assets/pfichtner-freetz/checkout-in-container"><img src="https://pfichtner.github.io/assets/pfichtner-freetz/asciinema-poster.png" /></a>
 
 Of course in a CI environment you don't want to do ```menuconfig``` since it's a fully automated build. That's where I am using ```oldconfig```: 
 ```
