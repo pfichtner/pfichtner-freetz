@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 HTTP_SOURCE=$1
 CACHE=$2
