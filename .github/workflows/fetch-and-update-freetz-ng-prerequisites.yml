@@ -22,7 +22,7 @@ jobs:
         key: curlcontent-${{ runner.os }}-${{ github.run_id }}
         restore-keys: curlcontent-${{ runner.os }}
     - name: Run generate-prereqs.sh
-      run: bash scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/PREREQUISITES/README.md" ~/.cache provisioning
+      run: bash scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/prerequisites/README.md" ~/.cache provisioning
     - name: set ETAG env
       run: echo "ETAG=$(cat ~/.cache/README.md.etag | tr -d '\"')" >> $GITHUB_ENV
     - name: Create Pull Request
