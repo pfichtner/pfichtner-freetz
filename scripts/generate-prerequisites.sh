@@ -101,7 +101,7 @@ writeFiles() {
 [ -d "$CACHE" ] || mkdir -p "$CACHE"
 FILENAME=`basename "$1"`
 HTTP_STATUS=`curl --etag-save "$CACHE/$FILENAME.etag" --etag-compare "$CACHE/$FILENAME.etag" -so "$CACHE/$FILENAME" -w "%{http_code}" "$HTTP_SOURCE"`
-[[ $HTTP_STATUS =~ ^4[0-9]{2}$ ]] && fail "Error: Failed to download $HTTP_SOURCE (HTTP $HTTP_STATUS)" 
+[[ $HTTP_STATUS =~ ^(2[0-9]{2}|304)$ ]] || fail "Failed to download $HTTP_SOURCE (HTTP $HTTP_STATUS)"
 
 OVERWRITE=false
 [ "$HTTP_STATUS" = 200 ] && OVERWRITE=true
