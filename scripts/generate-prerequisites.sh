@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 HTTP_SOURCE=$1
 CACHE=$2
@@ -24,7 +24,9 @@ content() {
 	DISTRO_ENTRY="$2"
 	cat "$SOURCE_FILE" | \
 	# find relevant section (ignore all lines before)
-	sed -n "/$DISTRO_ENTRY/,\$p" | \
+	SECTION=$(sed -n "/$DISTRO_ENTRY/,\$p" "$SOURCE_FILE")
+	# Extract content between ``` fences and clean it
+	printf '%s\n' "$SECTION" \
 	# find content between "```"
 	sed -n '/```/{:loop n; /```/q; p; b loop}' | sed ':a;N;$!ba;s/\\\n//g' | sed 's/[[:space:]]\+/ /g'
 }
