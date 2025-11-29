@@ -10,25 +10,43 @@ fail() {
 }
 
 deps() {
-	CONTENT="$1"
-	FILTER="$2"
-	# echo "$CONTENT" | sed -n -E 's/'"$FILTER"'//p' | tr ' ' '\n' | grep .
+    local CONTENT="$1"
+    local FILTER="$2"
 
-	CONTENT=$(echo "$CONTENT" | sed -n -E 's/'"$FILTER"'//p')
-	IFS=$'\n' arr=( $(xargs -n1 <<<"$CONTENT") )
-	printf '%s\n' "${arr[@]}" | grep .
+    # Remove comment lines
+    CONTENT=$(echo "$CONTENT" | sed -E '/^[[:space:]]*#/d')
+
+    # Remove installer prefix (sudo apt-get/apt/dnf -y install …)
+    CONTENT=$(echo "$CONTENT" | sed -E "s/${FILTER}//")
+
+    # Normalize spacing
+    CONTENT=$(echo "$CONTENT" | sed -E 's/ +/ /g; s/^ //')
+
+    # One word per line
+    WORDS=$(echo "$CONTENT" | xargs -n1)
+
+    # Output clean package list (unquoted)
+    printf '%s\n' $WORDS
 }
 
 content() {
-	SOURCE_FILE="$1"
-	DISTRO_ENTRY="$2"
-	cat "$SOURCE_FILE" | \
-	# find relevant section (ignore all lines before)
-	SECTION=$(sed -n "/$DISTRO_ENTRY/,\$p" "$SOURCE_FILE")
-	# Extract content between ``` fences and clean it
-	printf '%s\n' "$SECTION" \
-	# find content between "```"
-	sed -n '/```/{:loop n; /```/q; p; b loop}' | sed ':a;N;$!ba;s/\\\n//g' | sed 's/[[:space:]]\+/ /g'
+    local SOURCE_FILE="$1"
+    local DISTRO_ENTRY="$2"
+
+    awk -v pat="$DISTRO_ENTRY" '
+        $0 ~ pat { found=1; next }
+
+        found && /^```/ {
+            if (fence == 0) { fence=1; next }   # start block
+            else if (fence == 1) exit           # end block
+        }
+
+        fence == 1 { print }
+    ' "$SOURCE_FILE" \
+    | sed ':a;N;$!ba;s/\\\n/ /g' \
+    | sed -E 's/[[:space:]]+/ /g' \
+    | sed -E 's/^[[:space:]]+//' \
+    | sed -E 's/[[:space:]]+$//'
 }
 
 linesToJsonArray() {
@@ -57,15 +75,7 @@ writeDepsJsonFile() {
 
 	DEPS=$(deps "$CONTENT" "$PATTERN")
 	PACKAGES=$(linesToJsonArray "$DEPS")
-
-	if [[ "$DISTRO_ENTRY" == *"Fedora"* ]]; then
-		INSTALL_GROUPS=$(deps "$CONTENT" '^sudo dnf -y groupinstall ')
-		ARR=$(linesToJsonArray "$INSTALL_GROUPS")
-		toJson '{ "groups": %s, "packages": %s }' "$ARR" "$PACKAGES" >"$TARGET_FILE"
-	else
-		toJson '{ "packages": %s }' "$PACKAGES" >"$TARGET_FILE"
-	fi
-
+	toJson '{ "packages": %s }' "$PACKAGES" >"$TARGET_FILE"
 }
 
 writePackageFile() {
@@ -112,23 +122,24 @@ UBUNTU_PATTERN='^sudo apt-get -y install |^sudo apt -y install '
 DEBIAN_PATTERN="$UBUNTU_PATTERN"
 FEDORA_PATTERN='^sudo dnf -y install '
 
-writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:24.04" "$OVERWRITE" ' - Ubuntu 23\/24'     "$UBUNTU_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:22.04" "$OVERWRITE" ' - Ubuntu 22'         "$UBUNTU_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:20.04" "$OVERWRITE" ' - Ubuntu 20'         "$UBUNTU_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:18.04" "$OVERWRITE" ' - Ubuntu 18'         "$UBUNTU_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:16.04" "$OVERWRITE" ' - Ubuntu 15\/16'     "$UBUNTU_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:14.04" "$OVERWRITE" ' - Ubuntu 14'         "$UBUNTU_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:24.04" "$OVERWRITE" '- Ubuntu 23\/24\/25 64-Bit:' "$UBUNTU_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:22.04" "$OVERWRITE" '- Ubuntu 22'         "$UBUNTU_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:20.04" "$OVERWRITE" '- Ubuntu 20'         "$UBUNTU_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:18.04" "$OVERWRITE" '- Ubuntu 18'         "$UBUNTU_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:16.04" "$OVERWRITE" '- Ubuntu 15\/16'     "$UBUNTU_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:14.04" "$OVERWRITE" '- Ubuntu 14'         "$UBUNTU_PATTERN"
 
-writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:12"    "$OVERWRITE" ' - Debian 12'         "$DEBIAN_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:11"    "$OVERWRITE" ' - Debian 11'         "$DEBIAN_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:13"    "$OVERWRITE" '- Debian 13'         "$DEBIAN_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:12"    "$OVERWRITE" '- Debian 12'         "$DEBIAN_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:11"    "$OVERWRITE" '- Debian 11'         "$DEBIAN_PATTERN"
 
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:41"    "$OVERWRITE" ' - Fedora 41'         "$FEDORA_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:40"    "$OVERWRITE" ' - Fedora 40'         "$FEDORA_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:39"    "$OVERWRITE" ' - Fedora 37\/38\/39' "$FEDORA_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:38"    "$OVERWRITE" ' - Fedora 37\/38\/39' "$FEDORA_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:37"    "$OVERWRITE" ' - Fedora 37\/38\/39' "$FEDORA_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:36"    "$OVERWRITE" ' - Fedora 36'         "$FEDORA_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:35"    "$OVERWRITE" ' - Fedora 35'         "$FEDORA_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:34"    "$OVERWRITE" ' - Fedora 33\/34'     "$FEDORA_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:33"    "$OVERWRITE" ' - Fedora 33\/34'     "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:41"    "$OVERWRITE" '- Fedora 41'         "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:40"    "$OVERWRITE" '- Fedora 40'         "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:39"    "$OVERWRITE" '- Fedora 37\/38\/39' "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:38"    "$OVERWRITE" '- Fedora 37\/38\/39' "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:37"    "$OVERWRITE" '- Fedora 37\/38\/39' "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:36"    "$OVERWRITE" '- Fedora 36'         "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:35"    "$OVERWRITE" '- Fedora 35'         "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:34"    "$OVERWRITE" '- Fedora 33\/34'     "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:33"    "$OVERWRITE" '- Fedora 33\/34'     "$FEDORA_PATTERN"
 
