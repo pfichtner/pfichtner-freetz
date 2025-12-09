@@ -49,6 +49,8 @@ jobs:
           TAG="${DISTRO}-${VER}-v${VERSION}"
 
           echo "Generated tag: $TAG"
+          echo "DISTRO=$DISTRO" >> $GITHUB_ENV
+          echo "VER=$VER" >> $GITHUB_ENV
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Login to GHCR
@@ -65,7 +67,7 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.REPO }}:${{ steps.tag.outputs.tag }}
-            ${{ env.REGISTRY }}/${{ env.REPO }}:${DISTRO}-${VER}-latest
+            ${{ env.REGISTRY }}/${{ env.REPO }}:${{ env.DISTRO }}-${{ env.VER }}-latest
           build-args: |
             PARENT=${{ matrix.base }}
             ${HTTP_PROXY:+http_proxy=${HTTP_PROXY}}
