@@ -65,6 +65,7 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.REPO }}:${{ steps.tag.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ env.REPO }}:${DISTRO}-${VER}-latest
           build-args: |
             PARENT=${{ matrix.base }}
             ${HTTP_PROXY:+http_proxy=${HTTP_PROXY}}
