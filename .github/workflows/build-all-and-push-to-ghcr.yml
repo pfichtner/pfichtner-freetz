@@ -1,0 +1,72 @@
+name: Matrix Docker Build & Push
+
+on:
+  schedule:
+    - cron: "32 14 * * 0"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      REGISTRY: ghcr.io
+      REPO: ${{ github.repository_owner }}/pfichtner-freetz
+      VERSION: "0.0.1"
+      HTTP_PROXY: ${{ secrets.HTTP_PROXY || '' }}
+      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY || '' }}
+
+    strategy:
+      matrix:
+        base:
+          - debian:11
+          - debian:12
+          - debian:13
+          - fedora:38
+          - fedora:39
+          - fedora:40
+          - fedora:41
+          - ubuntu:20.04
+          - ubuntu:22.04
+          - ubuntu:24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate tag name
+        id: tag
+        shell: bash
+        run: |
+          IMAGE="${{ matrix.base }}"
+
+          # Split into distro + version
+          DISTRO=$(echo "$IMAGE" | cut -d: -f1)
+          VER=$(echo "$IMAGE" | cut -d: -f2)
+
+          TAG="${DISTRO}-${VER}-v${VERSION}"
+
+          echo "Generated tag: $TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.REPO }}:${{ steps.tag.outputs.tag }}
+          build-args: |
+            PARENT=${{ matrix.base }}
+            ${HTTP_PROXY:+http_proxy=${HTTP_PROXY}}
+            ${HTTPS_PROXY:+https_proxy=${HTTPS_PROXY}}
+
