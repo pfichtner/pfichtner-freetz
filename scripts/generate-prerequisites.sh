@@ -122,6 +122,7 @@ UBUNTU_PATTERN='^sudo apt-get -y install |^sudo apt -y install '
 DEBIAN_PATTERN="$UBUNTU_PATTERN"
 FEDORA_PATTERN='^sudo dnf -y install '
 
+writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:26.04" "$OVERWRITE" '- Ubuntu 23\/24\/25 64-Bit:' "$UBUNTU_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:24.04" "$OVERWRITE" '- Ubuntu 23\/24\/25 64-Bit:' "$UBUNTU_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:22.04" "$OVERWRITE" '- Ubuntu 22'         "$UBUNTU_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:20.04" "$OVERWRITE" '- Ubuntu 20'         "$UBUNTU_PATTERN"
