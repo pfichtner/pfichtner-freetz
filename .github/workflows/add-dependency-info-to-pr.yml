@@ -9,17 +9,8 @@ jobs:
     - uses: actions/checkout@v6
     - name: Run scripts/dependency-diff.sh
       run: bash scripts/dependency-diff.sh provisioning >.dependency-diff.txt
-    - name: Check if .dependency-diff.txt exists and is not empty
-      id: check_file
-      run: |
-        if [ -s .dependency-diff.txt ]; then
-          echo "::set-output name=file_exists::true"
-        else
-          echo "::set-output name=file_exists::false"
-        fi
     - name: Comment PR
       uses: thollander/actions-comment-pull-request@v3
-      if: steps.check_file.outputs.file_exists == 'true'
+      if: hashFiles('.dependency-diff.txt') != '' && !cancelled()
       with:
         file-path: .dependency-diff.txt
-
