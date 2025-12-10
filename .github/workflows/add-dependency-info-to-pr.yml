@@ -1,18 +1,33 @@
 name: Add Dependency Information to PR
 
-on: [pull_request]
+on:
+  workflow_run:
+    workflows: ["Update Freetz-NG Prerequisites"]
+    types:
+      - completed
 
 jobs:
   comment_pr:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
-    - name: Run scripts/dependency-diff.sh
+    - name: Get branch name
       run: |
-        bash scripts/dependency-diff.sh provisioning >.dependency-diff.txt
-        [ ! -s .dependency-diff.txt ] && rm .dependency-diff.txt
+        BRANCH_NAME=$(jq -r '.head_branch' <<< "${{ toJSON(github.event.workflow_run) }}")
+        echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+    - name: Run scripts/dependency-diff.sh
+      run: bash scripts/dependency-diff.sh provisioning >.dependency-diff.txt
+    - name: Get PR number
+      run: |
+        PR_NUMBER=$(gh pr list --state open --head $BRANCH_NAME --json number -q '.[0].number')
+        if [ -z "$PR_NUMBER" ]; then
+          echo "No open PR found for branch $BRANCH_NAME, exiting."
+          exit 0
+        fi
+        echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
     - name: Comment PR
       uses: thollander/actions-comment-pull-request@v3
-      if: hashFiles('.dependency-diff.txt') != '' && !cancelled()
       with:
+        pull-request-number: ${{ env.PR_NUMBER }}
         file-path: .dependency-diff.txt
