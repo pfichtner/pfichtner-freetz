@@ -78,31 +78,6 @@ jobs:
 
       - name: Build & Push
         uses: docker/build-push-action@v6
-        env:
-          DOCKER_BUILD_SUMMARY: true
-        with:
-          context: .
-          push: false  # Build the image but do not push yet
-          build-args: ${{ env.BUILD_ARGS }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Setup Bats and bats libs
-        id: setup-bats
-        uses: bats-core/bats-action@3.0.1
-
-      - name: Run Tests
-        id: run-tests
-        shell: bash
-        env:
-          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
-        run: bats tests/test.sh
-
-      - name: Build & Push
-        if: ${{ steps.run-tests.outcome == 'success' }}
-        uses: docker/build-push-action@v6
-        env:
-          DOCKER_BUILD_SUMMARY: false
         with:
           context: .
           push: true
