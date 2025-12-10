@@ -8,7 +8,9 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name: Run scripts/dependency-diff.sh
-      run: bash scripts/dependency-diff.sh provisioning >.dependency-diff.txt
+      run: |
+        bash scripts/dependency-diff.sh provisioning >.dependency-diff.txt
+        [ ! -s .dependency-diff.txt ] && rm .dependency-diff.txt
     - name: Comment PR
       uses: thollander/actions-comment-pull-request@v3
       if: hashFiles('.dependency-diff.txt') != '' && !cancelled()
