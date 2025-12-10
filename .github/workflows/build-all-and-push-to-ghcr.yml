@@ -8,19 +8,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    continue-on-error: true
     permissions:
       contents: read
       packages: write
 
     env:
       REGISTRY: ghcr.io
-      REPO: ${{ github.repository_owner }}/pfichtner-freetz
+      REPO: ${{ github.repository_owner }}/${{ github.event.repository.name }}
       VERSION: "0.0.1"
       HTTP_PROXY: ${{ secrets.HTTP_PROXY || '' }}
       HTTPS_PROXY: ${{ secrets.HTTPS_PROXY || '' }}
+      BUILD_ARGS: |
+        PARENT=${{ matrix.base }}
+        ${HTTP_PROXY:+http_proxy=${HTTP_PROXY}}
+        ${HTTPS_PROXY:+https_proxy=${HTTPS_PROXY}}
 
     strategy:
+      fail-fast: false
       matrix:
         base:
           - debian:11
@@ -35,7 +39,8 @@ jobs:
           - ubuntu:26.04
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Check out the repo
+        uses: actions/checkout@v6
 
       - name: Generate tag name
         id: tag
@@ -46,31 +51,61 @@ jobs:
           # Split into distro + version
           DISTRO=$(echo "$IMAGE" | cut -d: -f1)
           VER=$(echo "$IMAGE" | cut -d: -f2)
+          VERSION="v${{ env.VERSION }}"
 
-          TAG="${DISTRO}-${VER}-v${VERSION}"
+          TAG="${DISTRO}-${VER}-${VERSION}"
 
           echo "Generated tag: $TAG"
-          echo "DISTRO=$DISTRO" >> $GITHUB_ENV
-          echo "VER=$VER" >> $GITHUB_ENV
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "DISTRO=$DISTRO" >> $GITHUB_OUTPUT
+          echo "VER=$VER" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.REPO }}
+          tags: |
+            ${{ steps.tag.outputs.DISTRO }}-${{ steps.tag.outputs.VER }}-${{ steps.tag.outputs.VERSION }}
+            ${{ steps.tag.outputs.DISTRO }}-${{ steps.tag.outputs.VER }}-latest
 
       - name: Build & Push
         uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILD_SUMMARY: true
+        with:
+          context: .
+          push: false  # Build the image but do not push yet
+          build-args: ${{ env.BUILD_ARGS }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Setup Bats and bats libs
+        id: setup-bats
+        uses: bats-core/bats-action@3.0.1
+
+      - name: Run Tests
+        id: run-tests
+        shell: bash
+        env:
+          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+        run: bats tests/test.sh
+
+      - name: Build & Push
+        if: ${{ steps.run-tests.outcome == 'success' }}
+        uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILD_SUMMARY: false
         with:
           context: .
           push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.REPO }}:${{ steps.tag.outputs.tag }}
-            ${{ env.REGISTRY }}/${{ env.REPO }}:${{ env.DISTRO }}-${{ env.VER }}-latest
-          build-args: |
-            PARENT=${{ matrix.base }}
-            ${HTTP_PROXY:+http_proxy=${HTTP_PROXY}}
-            ${HTTPS_PROXY:+https_proxy=${HTTPS_PROXY}}
-
+          build-args: ${{ env.BUILD_ARGS }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
