@@ -28,11 +28,15 @@ jobs:
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v8
       with:
-        # token is necessary so that the PR can be commented by another GHA workflow
-        token: ${{ secrets.PR_PAT }}
         title: 'https://github.com/Freetz-NG/freetz-ng/blob/master/docs/PREREQUISITES was updated'
         branch: create-pull-request/patch-${{ env.ETAG }}
         commit-message: "Update in upstream content"
         delete-branch: true
         assignees: pfichtner
+    - name: Run scripts/dependency-diff.sh
+      run: bash scripts/dependency-diff.sh provisioning >.dependency-diff.txt
+    - name: Comment PR
+      uses: thollander/actions-comment-pull-request@v3
+      with:
+        file-path: .dependency-diff.txt
 
