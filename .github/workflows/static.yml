@@ -28,13 +28,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Run scripts/dependency-diff.sh
-        run: bash scripts/dependency-diff.sh provisioning >provisioning/dependency-diff.md
+        run: |
+          bash scripts/dependency-diff.sh provisioning >provisioning/dependency-diff.md
+          cd provisioning && ln -s dependency-diff.md README.md
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: provisioning
+          destination: _site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: 'provisioning'
+          path: '_site'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
