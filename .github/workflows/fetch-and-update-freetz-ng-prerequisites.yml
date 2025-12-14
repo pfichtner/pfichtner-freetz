@@ -8,10 +8,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      GH_TOKEN: ${{ secrets.PR_PAT }}
+      PREREQS_REPO: Freetz-NG/freetz-ng
+      PREREQS_REF: master
+      PREREQS_PATH: docs/prerequisites/README.md
+
     steps:
     - uses: actions/checkout@v6
       with:
         persist-credentials: false
+
     - name: Cache curl results
       id: cache-curl-results
       uses: actions/cache@v5
@@ -21,19 +29,49 @@ jobs:
         path: ~/.cache
         key: curlcontent-${{ runner.os }}-${{ github.run_id }}
         restore-keys: curlcontent-${{ runner.os }}
+
     - name: Run generate-prereqs.sh
-      run: bash scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/prerequisites/README.md" ~/.cache provisioning
+      run: bash scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/${{ env.PREREQS_REPO }}/${{ env.PREREQS_REF }}/${{ env.PREREQS_PATH }}" ~/.cache provisioning
+
     - name: set ETAG env
       id: set_etag_env
-      run: echo "ETAG=$(cat ~/.cache/README.md.etag | tr -d '\"')" >> $GITHUB_OUTPUT
+      run: |
+        ETAG="$(cat ~/.cache/README.md.etag | tr -d '\"')"
+        echo PR_BRANCH="create-pull-request/patch-${ETAG}" >> $GITHUB_OUTPUT
+
+    - name: check if branch as open PR
+      id: check_open_pr
+      env:
+        PR_BRANCH: ${{ steps.set_etag_env.outputs.PR_BRANCH }}
+      run: |
+        OPEN_PR=$(gh pr list --state open --head "$PR_BRANCH" --json number -q '.[0].number')
+        if [ -z "$OPEN_PR" ]; then
+          echo "NO_OPEN_PR=true" >> $GITHUB_OUTPUT
+        else
+          echo "NO_OPEN_PR=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Create Pull Request
+      if: ${{ steps.check_open_pr.outputs.NO_OPEN_PR == 'true' }}
       uses: peter-evans/create-pull-request@v8
+      id: create_pr
       with:
         # token is necessary so that the PR can be commented by another GHA workflow
-        token: ${{ secrets.PR_PAT }}
-        title: 'https://github.com/Freetz-NG/freetz-ng/blob/master/docs/PREREQUISITES was updated'
-        branch: create-pull-request/patch-${{ steps.set_etag_env.outputs.ETAG }}
+        token: ${{ env.GH_TOKEN }}
+        title: 'https://github.com/${{ env.PREREQS_REPO }}/blob/${{ env.PREREQS_REF }}/${{ env.PREREQS_PATH }} was updated'
+        branch: ${{ steps.set_etag_env.outputs.PR_BRANCH }}
         commit-message: "Update in upstream content"
         delete-branch: true
-        assignees: pfichtner
+        assignees: ${{ github.actor }}
 
+    - name: Run scripts/dependency-diff.sh
+      if: ${{ steps.create_pr.outputs.pull-request-number != '' }}
+      run: bash scripts/dependency-diff.sh provisioning >.dependency-diff.txt
+
+    - name: Comment PR
+      if: ${{ steps.create_pr.outputs.pull-request-number != '' }}
+      uses: thollander/actions-comment-pull-request@v3
+      with:
+        github-token: ${{ env.GH_TOKEN }}
+        pr-number: ${{ steps.create_pr.outputs.pull-request-number }}
+        file-path: .dependency-diff.txt
