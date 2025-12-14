@@ -24,14 +24,15 @@ jobs:
     - name: Run generate-prereqs.sh
       run: bash scripts/generate-prerequisites.sh "https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/prerequisites/README.md" ~/.cache provisioning
     - name: set ETAG env
-      run: echo "ETAG=$(cat ~/.cache/README.md.etag | tr -d '\"')" >> $GITHUB_ENV
+      id: set_etag_env
+      run: echo "ETAG=$(cat ~/.cache/README.md.etag | tr -d '\"')" >> $GITHUB_OUTPUT
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v8
       with:
         # token is necessary so that the PR can be commented by another GHA workflow
         token: ${{ secrets.PR_PAT }}
         title: 'https://github.com/Freetz-NG/freetz-ng/blob/master/docs/PREREQUISITES was updated'
-        branch: create-pull-request/patch-${{ env.ETAG }}
+        branch: create-pull-request/patch-${{ steps.set_etag_env.outputs.ETAG }}
         commit-message: "Update in upstream content"
         delete-branch: true
         assignees: pfichtner
