@@ -1,0 +1,40 @@
+name: Cleanup untagged GHCR images
+
+on:
+  schedule:
+    - cron: "0 2 * * 6"
+  workflow_dispatch:
+
+permissions:
+  packages: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete untagged images older than 7 days
+        env:
+          OWNER: ${{ github.repository_owner }}
+          PACKAGE: ${{ github.event.repository.name }}
+          GH_TOKEN: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+        run: |
+          CUTOFF=$(date -d "7 days ago" +%s)
+
+          versions=$(gh api \
+            /orgs/$OWNER/packages/container/$PACKAGE/versions \
+            --paginate)
+
+          echo "$versions" | jq -c '.[]' | while read version; do
+            tags=$(echo "$version" | jq '.metadata.container.tags')
+            updated=$(echo "$version" | jq -r '.updated_at')
+            updated_ts=$(date -d "$updated" +%s)
+            id=$(echo "$version" | jq -r '.id')
+
+            if [ "$tags" = "[]" ] && [ "$updated_ts" -lt "$CUTOFF" ]; then
+              echo "Deleting untagged version $id"
+              gh api \
+                --method DELETE \
+                /orgs/$OWNER/packages/container/$PACKAGE/versions/$id
+            fi
+          done
