@@ -22,7 +22,7 @@ jobs:
           CUTOFF=$(date -d "7 days ago" +%s)
 
           versions=$(gh api \
-            /orgs/$OWNER/packages/container/$PACKAGE/versions \
+            /users/$OWNER/packages/container/$PACKAGE/versions \
             --paginate)
 
           echo "$versions" | jq -c '.[]' | while read version; do
@@ -35,6 +35,6 @@ jobs:
               echo "Deleting untagged version $id"
               gh api \
                 --method DELETE \
-                /orgs/$OWNER/packages/container/$PACKAGE/versions/$id
+                /users/$OWNER/packages/container/$PACKAGE/versions/$id
             fi
           done
