@@ -7,6 +7,7 @@ on:
 
 permissions:
   packages: write
+  contents: read
 
 jobs:
   cleanup:
@@ -17,7 +18,7 @@ jobs:
         env:
           OWNER: ${{ github.repository_owner }}
           PACKAGE: ${{ github.event.repository.name }}
-          GH_TOKEN: ${{ secrets.GHCR_CLEANUP_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           CUTOFF=$(date -d "7 days ago" +%s)
 
