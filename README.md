@@ -69,12 +69,13 @@ Please note that the filesystem where Freetz(-NG) has been checked out has to be
 ## Environment variables
 You can pass the following environment variables (using docker's ```-e``` parameters)
 - ```BUILD_USER```  the username of the non-root user the entrypoint will switch to
-- ```BUILD_USER_UID``` the uid of the ```BUILD_USER```. This should be the UID of your current user so that all files are read/write using the same UID that the user started the container. So ```-e BUILD_USER_UID=$(id -u)``` is a good option. 
+- ```BUILD_USER_UID``` the uid (user id) of the ```BUILD_USER```. This should be the UID of your current user so that all files are read/write using the same UID that the user started the container. So ```-e BUILD_USER_UID=$(id -u)``` is a good option. 
 - ```USE_UID_FROM``` Instead of passing in the UID the docker container uses the UID this file/directory belongs to
 - ```BUILD_USER_HOME``` the home directory of the ```BUILD_USER```
 
 If you don't pass in any of these environment variables the docker container will switch to a mode where ```BUILD_USER``` is ```builduser```, ```BUILD_USER_HOME``` is ```/workspace``` and ```BUILD_USER_UID``` is determined by the user that is owner of ```/workspace```. 
 
+- ```BUILD_USER_GID``` the gid (group id) of the ```BUILD_USER```. 
 - ```AUTOINSTALL_PREREQUISITES``` By default Freetz-NG's prerequisites check is run and if there are missing prerequisites they get installed automatically. So even if the image is not uptodate you always should have a properly working build environment with all prerequisites installed. This feature will work only if the current working directory (```-w/--workdir```) contains a checked-out Freetz-NG. If Freetz-NG's script is not found this step is silently skipped as if it had been disabled. If you want to disable this feature in general set the environment variable to ```n```. 
 This feature gets available with pfichtner-freetz:0.3.4
 
