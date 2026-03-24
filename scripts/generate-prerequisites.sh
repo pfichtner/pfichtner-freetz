@@ -88,10 +88,41 @@ writePackageFile() {
 
 	[ -d `dirname "$TARGET_FILE"` ] || mkdir -p `dirname "$TARGET_FILE"`
 
-	PREFIX='sudo() { eval ${*@Q}; }'
 	CONTENT=$(content "$SOURCE_FILE" "$DISTRO_ENTRY")
 	[ -z "$CONTENT" ] && fail "No content for $DISTRO_ENTRY"
-	echo -e "$PREFIX\n$CONTENT\n" >"$TARGET_FILE"
+
+	{
+		cat <<'EOF'
+sudo() { "$@"; }
+_f() {
+  local c=$1; shift
+  local a_m=$(uname -m)
+  local f=""
+  case "$a_m" in
+    x86_64) f="${AMD64_FILTER_PACKAGES:-}" ;;
+    aarch64) f="${ARM64_FILTER_PACKAGES:-}" ;;
+    armv7l) f="${ARMHF_FILTER_PACKAGES:-}" ;;
+  esac
+  if [ -n "$f" ]; then
+    local p=()
+    for a in "$@"; do
+      if [[ ",$f," == *",$a,"* ]]; then
+        :
+      else
+        p+=("$a")
+      fi
+    done
+    command "$c" "${p[@]}"
+  else
+    command "$c" "$@"
+  fi
+}
+apt-get() { _f apt-get "$@"; }
+apt() { _f apt "$@"; }
+dnf() { _f dnf "$@"; }
+EOF
+		echo "$CONTENT"
+	} >"$TARGET_FILE"
 }
 
 writeFiles() {
