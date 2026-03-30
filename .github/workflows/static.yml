@@ -32,7 +32,7 @@ jobs:
           bash scripts/dependency-diff.sh provisioning >provisioning/dependency-diff.md
           cd provisioning && ln -s dependency-diff.md README.md
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
