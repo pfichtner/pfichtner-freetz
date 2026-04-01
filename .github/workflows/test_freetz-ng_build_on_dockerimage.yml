@@ -1,0 +1,73 @@
+name: Freetz Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      os:
+        required: true
+        default: "_all"
+      fos:
+        required: true
+        default: "08_2X"
+      box:
+        required: true
+        default: "7530_W5"
+      tools:
+        required: true
+        default: "yes"
+      rootemu:
+        required: true
+        default: "pseudo"
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.matrix.outputs.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: matrix
+        run: |
+          chmod +x .github/scripts/ci.sh
+          OUTPUT=$( .github/scripts/ci.sh prepare-matrix "${{ inputs.os }}" )
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+
+  build:
+    needs: matrix
+    strategy:
+      matrix:
+        docker: ${{ fromJson(needs.matrix.outputs.os) }}
+
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/pfichtner/pfichtner-freetz:${{ matrix.docker }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout Freetz-NG
+        uses: actions/checkout@v4
+
+      - name: Config
+        run: |
+          .github/scripts/ci.sh config \
+            "${{ inputs.fos }}" \
+            "${{ inputs.box }}"
+
+      - name: Extra config
+        run: |
+          .github/scripts/ci.sh extra-config \
+            "${{ inputs.tools }}" \
+            "${{ inputs.rootemu }}"
+
+      - name: Build
+        run: .github/scripts/ci.sh build
+
+      - name: Result
+        run: .github/scripts/ci.sh result
+
+      - name: Vars
+        id: vars
+        run: |
+          OUTPUT=$( .github/scripts/ci.sh vars )
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
