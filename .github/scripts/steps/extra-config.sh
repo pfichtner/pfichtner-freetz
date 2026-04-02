@@ -7,6 +7,9 @@ ROOTEMU="$2"
 [[ "$TOOLS" == "yes" ]] && echo '# FREETZ_DOWNLOAD_TOOLCHAIN is not set' >> .config
 [[ "$TOOLS" != "yes" ]] && echo 'FREETZ_DOWNLOAD_TOOLCHAIN=y' >> .config
 
+[[ "$TOOLS" == "yes" ]] && echo '# FREETZ_HOSTTOOLS_DOWNLOAD is not set' >> .config
+[[ "$TOOLS" != "yes" ]] && echo 'FREETZ_HOSTTOOLS_DOWNLOAD=y' >> .config
+
 [[ "$ROOTEMU" == "pseudo" ]] && echo '# FREETZ_ROOTEMU_FAKEROOT is not set' >> .config
 [[ "$ROOTEMU" != "pseudo" ]] && echo 'FREETZ_ROOTEMU_FAKEROOT=y' >> .config
 
