@@ -19,9 +19,13 @@ on:
         required: true
         default: "pseudo"
 
+concurrency:
+  group: "${{ github.workflow }}"
+  cancel-in-progress: true
+
 jobs:
   matrix:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     outputs:
       os: ${{ steps.matrix.outputs.os }}
     steps:
@@ -36,38 +40,57 @@ jobs:
   build:
     needs: matrix
     strategy:
+      fail-fast: false
       matrix:
         docker: ${{ fromJson(needs.matrix.outputs.os) }}
-
-    runs-on: ubuntu-latest
+        runner: [ uhuntu-24.04, ubuntu-24.04-arm ]
+    runs-on: ${{ matrix.runner }} 
     container:
       image: ghcr.io/pfichtner/pfichtner-freetz:${{ matrix.docker }}
+      options: --user 1001:1001
+    env:
+      FREETZ_CLONE_PATH: '${{ github.workspace }}/freetz'
+      FREETZ_REPO: Freetz-NG/freetz-ng
+      MAIN_CLONE_PATH: '${{ github.workspace }}' 
+      MAIN_REPO: ${{ github.repository }}
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ env.MAIN_REPO }}
+          path: ${{ env.MAIN_CLONE_PATH }}
       - name: Checkout Freetz-NG
         uses: actions/checkout@v6
+        with:
+          repository: ${{ env.FREETZ_REPO }}
+          path: ${{ env.FREETZ_CLONE_PATH }}
 
       - name: Config
+        working-directory: ${{ env.FREETZ_CLONE_PATH }}
         run: |
-          .github/scripts/ci.sh config \
+          ../.github/scripts/ci.sh config \
             "${{ inputs.fos }}" \
             "${{ inputs.box }}"
 
       - name: Extra config
+        working-directory: ${{ env.FREETZ_CLONE_PATH }} 
         run: |
-          .github/scripts/ci.sh extra-config \
+          ../.github/scripts/ci.sh extra-config \
             "${{ inputs.tools }}" \
             "${{ inputs.rootemu }}"
 
       - name: Build
-        run: .github/scripts/ci.sh build
+        working-directory: ${{ env.FREETZ_CLONE_PATH }}
+        run: ../.github/scripts/ci.sh build
 
       - name: Result
-        run: .github/scripts/ci.sh result
+        working-directory: ${{ env.FREETZ_CLONE_PATH }}
+        run: ../.github/scripts/ci.sh result
 
       - name: Vars
+        working-directory: ${{ env.FREETZ_CLONE_PATH }}
         id: vars
         run: |
-          OUTPUT=$( .github/scripts/ci.sh vars )
+          OUTPUT=$( ../.github/scripts/ci.sh vars )
           echo "$OUTPUT" >> $GITHUB_OUTPUT
