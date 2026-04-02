@@ -33,7 +33,6 @@ jobs:
 
       - id: matrix
         run: |
-          chmod +x .github/scripts/ci.sh
           OUTPUT=$( .github/scripts/ci.sh prepare-matrix "${{ inputs.os }}" )
           echo "$OUTPUT" >> $GITHUB_OUTPUT
 
