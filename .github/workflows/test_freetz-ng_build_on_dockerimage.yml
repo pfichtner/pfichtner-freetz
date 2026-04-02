@@ -42,8 +42,8 @@ jobs:
       fail-fast: false
       matrix:
         docker: ${{ fromJson(needs.matrix.outputs.os) }}
-        runner: [ uhuntu-24.04, ubuntu-24.04-arm ]
-    runs-on: ${{ matrix.runner }} 
+        runner: [ ubuntu-24.04, ubuntu-24.04-arm ]
+    runs-on: '${{ matrix.runner }}'
     container:
       image: ghcr.io/pfichtner/pfichtner-freetz:${{ matrix.docker }}
       options: --user 1001:1001
