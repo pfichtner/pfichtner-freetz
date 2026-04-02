@@ -11,8 +11,12 @@ echo 'FREETZ_MODULES_OWN=""' >> .config
 for x in UDEVMOUNT; do echo "# FREETZ_PATCH_$x is not set" >> .config; done
 for x in dummy loop usbserial; do echo "# FREETZ_MODULE_$x is not set" >> .config; done
 for x in DROPBEAR; do echo "# FREETZ_PACKAGE_$x is not set" >> .config; done
+for x in LDD; do echo "FREETZ_PACKAGE_$x=y"  >> .config; done
+for x in COMPRESSED UNCOMPRESSED; do echo "FREETZ_SIZEINFO_$x=y"  >> .config; done
 
-echo "FREETZ_PACKAGE_LDD=y" >> .config
+echo 'FREETZ_VERBOSITY_FWMOD_2=y' >> .config
+echo 'FREETZ_VERBOSITY_LEVEL_0=y' >> .config
+echo 'FREETZ_VERBOSITY_LEVEL=0' >> .config
 
 echo 'FREETZ_SERIES_ALL=y' >> .config
 echo 'FREETZ_USER_LEVEL_DEVELOPER=y' >> .config
