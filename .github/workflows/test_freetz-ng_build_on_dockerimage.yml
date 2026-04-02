@@ -25,7 +25,7 @@ jobs:
     outputs:
       os: ${{ steps.matrix.outputs.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - id: matrix
         run: |
@@ -44,9 +44,9 @@ jobs:
       image: ghcr.io/pfichtner/pfichtner-freetz:${{ matrix.docker }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Checkout Freetz-NG
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Config
         run: |
