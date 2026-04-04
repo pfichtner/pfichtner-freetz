@@ -6,6 +6,7 @@ if [ -n "$UBUNTU_MIRROR" ]; then
     sed -i \
       -e "s|http://archive.ubuntu.com/ubuntu|$UBUNTU_MIRROR|g" \
       -e "s|http://security.ubuntu.com/ubuntu|$UBUNTU_MIRROR|g" \
+      -e "s|http://ports.ubuntu.com/ubuntu-ports|$UBUNTU_MIRROR|g" \
       /etc/apt/sources.list
   fi
 
@@ -13,6 +14,7 @@ if [ -n "$UBUNTU_MIRROR" ]; then
     sed -i \
       -e "s|http://archive.ubuntu.com/ubuntu/|$UBUNTU_MIRROR|g" \
       -e "s|http://security.ubuntu.com/ubuntu/|$UBUNTU_MIRROR|g" \
+      -e "s|http://ports.ubuntu.com/ubuntu-ports/|$UBUNTU_MIRROR|g" \
       /etc/apt/sources.list.d/*.sources
   fi
 fi
