@@ -88,11 +88,18 @@ jobs:
             ${{ steps.tag.outputs.DISTRO }}-${{ steps.tag.outputs.VER }}-latest
 
       - name: Build & Push
+        id: push
+        continue-on-error: true
         uses: docker/build-push-action@v7
-        with:
+        with: &build_args
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
           build-args: ${{ env.BUILD_ARGS }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Retry Build & Push
+        if: ${{ steps.push.outcome == 'failure' }}
+        uses: docker/build-push-action@v7
+        with: *build_args
