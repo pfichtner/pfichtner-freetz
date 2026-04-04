@@ -123,3 +123,31 @@ pfichtner/freetz also runs using podman (which has advantages due to being daeme
 ```
 podman run --userns keep-id --rm -it -v $PWD:/workspace docker.io/pfichtner/freetz
 ```
+
+### Mirror configuration (build-time)
+
+The following variables allow overriding the default package mirrors used during image build:
+
+- `UBUNTU_MIRROR`  
+  Override the default Ubuntu package mirror (e.g. `http://de.archive.ubuntu.com/ubuntu`).  
+  If not set, the default mirror from the base image is used.
+
+- `DEBIAN_MIRROR`  
+  Override the default Debian package mirror (e.g. `http://deb.debian.org/debian`).  
+  If not set, the default mirror from the base image is used.
+
+- `DEBIAN_SECURITY_MIRROR`  
+  Override the Debian security updates mirror (e.g. `http://security.debian.org/debian-security`).  
+  If not set, the default security mirror is used.
+
+> **Note:** These variables are evaluated during image build, not at container runtime.  
+> Passing them via `docker run -e ...` has no effect unless the image was built with them.
+
+#### Example: build with custom mirrors
+
+```bash
+docker build \
+  --build-arg UBUNTU_MIRROR=http://de.archive.ubuntu.com/ubuntu \
+  --build-arg DEBIAN_MIRROR=http://ftp.de.debian.org/debian \
+  --build-arg DEBIAN_SECURITY_MIRROR=http://security.debian.org/debian-security \
+  -t pfichtner/freetz:custom .
