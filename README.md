@@ -124,30 +124,50 @@ pfichtner/freetz also runs using podman (which has advantages due to being daeme
 podman run --userns keep-id --rm -it -v $PWD:/workspace docker.io/pfichtner/freetz
 ```
 
-### Mirror configuration (build-time)
+## How to build the image yourself
+If you want to customize the build environment (e.g. use different package mirrors, corporate proxies, or tweak the Dockerfile), you can build the image locally.
 
-The following variables allow overriding the default package mirrors used during image build:
+```
+docker build -t pfichtner/freetz:custom .
+```
 
-- `UBUNTU_MIRROR`  
-  Override the default Ubuntu package mirror (e.g. `http://de.archive.ubuntu.com/ubuntu`).  
-  If not set, the default mirror from the base image is used.
+### Using custom mirrors (build-time)
+You can override the default package mirrors used during the image build:
+- UBUNTU_MIRROR – e.g. http://de.archive.ubuntu.com/ubuntu
+- DEBIAN_MIRROR – e.g. http://deb.debian.org/debian
+- DEBIAN_SECURITY_MIRROR – e.g. http://security.debian.org/debian-security
 
-- `DEBIAN_MIRROR`  
-  Override the default Debian package mirror (e.g. `http://deb.debian.org/debian`).  
-  If not set, the default mirror from the base image is used.
+If not set, the defaults from the base image are used.
 
-- `DEBIAN_SECURITY_MIRROR`  
-  Override the Debian security updates mirror (e.g. `http://security.debian.org/debian-security`).  
-  If not set, the default security mirror is used.
+Note: These are evaluated during image build, not at container runtime.
 
-> **Note:** These variables are evaluated during image build, not at container runtime.  
-> Passing them via `docker run -e ...` has no effect unless the image was built with them.
-
-#### Example: build with custom mirrors
-
-```bash
+Example
+```
 docker build \
   --build-arg UBUNTU_MIRROR=http://de.archive.ubuntu.com/ubuntu \
   --build-arg DEBIAN_MIRROR=http://ftp.de.debian.org/debian \
   --build-arg DEBIAN_SECURITY_MIRROR=http://security.debian.org/debian-security \
   -t pfichtner/freetz:custom .
+```
+
+### Using a proxy (recommended for frequent builds)
+If you build images often or in a restricted network, using a proxy can significantly speed up downloads and improve reliability.
+
+You can pass proxy settings as build arguments:
+```
+docker build \
+  --build-arg http_proxy=http://proxy:3128/ \
+  --build-arg https_proxy=http://proxy:3128/ \
+  -t pfichtner/freetz:custom .
+```
+
+You can combine proxy + mirror configuration:
+```
+docker build \
+  --build-arg http_proxy=http://proxy:3128/ \
+  --build-arg https_proxy=http://proxy:3128/ \
+  --build-arg UBUNTU_MIRROR=http://de.archive.ubuntu.com/ubuntu \
+  --build-arg DEBIAN_MIRROR=http://ftp.de.debian.org/debian \
+  --build-arg DEBIAN_SECURITY_MIRROR=http://security.debian.org/debian-security \
+  -t pfichtner/freetz:custom .
+```
