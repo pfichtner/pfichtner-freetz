@@ -5,101 +5,98 @@ on:
     - cron: "32 14 * * 0"
   workflow_dispatch:
 
+env:
+  HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+  HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+  build-prepare:
+    runs-on: ubuntu-slim
 
     env:
       REGISTRY: ghcr.io
       REPO: ${{ github.repository_owner }}/${{ github.event.repository.name }}
       VERSION: "0.0.1"
-      HTTP_PROXY: ${{ secrets.HTTP_PROXY || '' }}
-      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY || '' }}
-      BUILD_ARGS: |
-        PARENT=${{ matrix.base }}
-        ${HTTP_PROXY:+http_proxy=${HTTP_PROXY}}
-        ${HTTPS_PROXY:+https_proxy=${HTTPS_PROXY}}
 
+    outputs:
+      matrix: ${{ steps.generate.outputs.matrix }}
+      registry: ${{ steps.generate.outputs.registry }}
+
+    steps:
+      - name: Define Base Images
+        id: base
+        shell: bash
+        run: |
+          echo "BASE_IMAGES= \
+          debian:11 \
+          debian:12 \
+          debian:13 \
+          fedora:41 \
+          fedora:42 \
+          fedora:43 \
+          ubuntu:20.04 \
+          ubuntu:22.04 \
+          ubuntu:24.04 \
+          ubuntu:26.04" >> $GITHUB_OUTPUT
+
+      - name: Generate matrix and metadata
+        id: generate
+        shell: bash
+        run: |
+          declare -a MATRIX_ARRAY
+          IMAGES="$(echo '${{ env.REGISTRY }}/${{ env.REPO }}' | tr '[:upper:]' '[:lower:]')"
+
+          for a in ${{ steps.base.outputs.BASE_IMAGES }}; do
+            DISTRO=$(echo "$a" | cut -d: -f1)
+            VER=$(echo "$a" | cut -d: -f2)
+            VERSION="v${{ env.VERSION }}"
+            TAG="${DISTRO}-${VER}-${VERSION}"
+            LATEST_TAG="${DISTRO}-${VER}-latest"
+            
+            # Build JSON entry as string
+            ENTRY="{\"images\":\"$IMAGES\",\"distro\":\"$DISTRO\",\"ver\":\"$VER\",\"version\":\"$VERSION\",\"tag\":\"$TAG\",\"latest\":\"$LATEST_TAG\"}"
+            MATRIX_ARRAY+=("$ENTRY")
+          done
+          
+          # Join array into JSON array
+          MATRIX="[$(IFS=,; echo "${MATRIX_ARRAY[*]}")]"
+          
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "registry=${{ env.REGISTRY }}" >> $GITHUB_OUTPUT
+
+  build:
     strategy:
       fail-fast: false
       matrix:
-        base:
-          - debian:11
-          - debian:12
-          - debian:13
-          - fedora:41
-          - fedora:42
-          - fedora:43
-          - ubuntu:20.04
-          - ubuntu:22.04
-          - ubuntu:24.04
-          - ubuntu:26.04
-
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v6
-
-      - name: Generate tag name
-        id: tag
-        shell: bash
-        run: |
-          IMAGE="${{ matrix.base }}"
-
-          # Split into distro + version
-          DISTRO=$(echo "$IMAGE" | cut -d: -f1)
-          VER=$(echo "$IMAGE" | cut -d: -f2)
-          VERSION="v${{ env.VERSION }}"
-
-          TAG="${DISTRO}-${VER}-${VERSION}"
-
-          echo "Generated tag: $TAG"
-          echo "DISTRO=$DISTRO" >> $GITHUB_OUTPUT
-          echo "VER=$VER" >> $GITHUB_OUTPUT
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Setup QEMU
-        id: qemu
-        uses: docker/setup-qemu-action@v4
-        with:
-          image: tonistiigi/binfmt:latest
-          platforms: all
-
-      - name: Setup Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v4
-
-      - name: Login to GHCR
-        uses: docker/login-action@v4
-        with:
-          registry: ${{ env.REGISTRY }}
+        include: ${{ fromJson(needs.build-prepare.outputs.matrix) }}
+    uses: docker/github-builder/.github/workflows/build.yml@v1
+    name: build - ${{ matrix.distro }}:${{ matrix.ver }}
+    needs:
+      - build-prepare
+    permissions:
+      contents: read
+      packages: write
+    with:
+      setup-qemu: false
+      cache: false
+      fail-fast: false
+      context: .
+      output: image
+      build-args: |
+        PARENT=${{ matrix.distro }}:${{ matrix.ver }}
+        ${HTTP_PROXY:+http_proxy=${HTTP_PROXY}}
+        ${HTTPS_PROXY:+https_proxy=${HTTPS_PROXY}}
+      platforms: linux/amd64,linux/arm64
+      push: true
+      set-meta-labels: true
+      meta-images: |
+        ${{ matrix.images }}
+      meta-tags: |
+        ${{ matrix.tag }}
+        ${{ matrix.latest }}
+      sign: false
+    secrets:
+      registry-auths: |
+        - registry: ${{ needs.build-prepare.outputs.registry }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.REPO }}
-          tags: |
-            ${{ steps.tag.outputs.DISTRO }}-${{ steps.tag.outputs.VER }}-${{ steps.tag.outputs.VERSION }}
-            ${{ steps.tag.outputs.DISTRO }}-${{ steps.tag.outputs.VER }}-latest
-
-      - name: Build & Push
-        id: push
-        continue-on-error: true
-        uses: docker/build-push-action@v7
-        with: &build_args
-          context: .
-          push: true
-          platforms: linux/amd64,linux/arm64
-          build-args: ${{ env.BUILD_ARGS }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Retry Build & Push
-        if: ${{ steps.push.outcome == 'failure' }}
-        uses: docker/build-push-action@v7
-        with: *build_args
