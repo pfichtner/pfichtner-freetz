@@ -116,7 +116,22 @@ If you encounter a problem when unpacking the image this could be caused by a pr
 - When installing docker initially on your machine, the user you want to use docker for has to be member of the docker group ("docker" on ubuntu, could differ in other distros), so add the user to the "docker" group
 - If you start an image (better said container) for the first time, the image is pulled from the remote docker repository ("dockerhub"). This could take a while but after that the image is cached on you machine and has not to be downloaded again
 - If you want to update an image that already was downloaded you can use `docker pull pfichtner/freetz` to check for a newer image and update it
-- When running on on a mac with arm cpu (M1/M2) pass ```--platform linux/amd64``` as additional argument to use x86 image
+- When running on a Mac with ARM CPU (M1/M2/M3) you should pass ```--platform linux/amd64``` to use the x86 image
+
+## ⚠️ ARM64 limitations
+
+Running this image on **ARM64 hosts** (e.g. Apple Silicon, ARM servers, GitHub ARM runners) is **only partially supported**.
+
+- ✅ **Works:** Devices using **kernel v4 and newer**
+- ❌ **Not supported:** Devices using **kernel v3 or older**
+
+### Background
+
+Some legacy host tools (e.g. `yf-akcarea-host`) require **32-bit x86 binaries**.
+
+These:
+- cannot run natively on ARM64
+- fail under emulation (`qemu-i386`) with errors like:
 
 ## Alternative to docker (podman)
 pfichtner/freetz also runs using podman (which has advantages due to being daemenless so you don't have to add users to any groups)
