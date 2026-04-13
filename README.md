@@ -126,12 +126,7 @@ Running this image on **ARM64 hosts** (e.g. Apple Silicon, ARM servers, GitHub A
 - ❌ **Not supported:** Devices using **kernel v3 or older**
 
 ### Background
-
-Some legacy host tools (e.g. `yf-akcarea-host`) require **32-bit x86 binaries**.
-
-These:
-- cannot run natively on ARM64
-- fail under emulation (`qemu-i386`) with errors like:
+Some legacy host tools (e.g. `yf-akcarea-host`) require **32-bit x86 binaries** which cannot run natively on ARM64. 
 
 ## Alternative to docker (podman)
 pfichtner/freetz also runs using podman (which has advantages due to being daemenless so you don't have to add users to any groups)
