@@ -61,14 +61,9 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Setup QEMU
-        id: qemu
         uses: docker/setup-qemu-action@v4
-        with:
-          image: tonistiigi/binfmt:latest
-          platforms: all
 
       - name: Setup Docker Buildx
-        id: buildx
         uses: docker/setup-buildx-action@v4
 
       - name: Login to GHCR
