@@ -70,8 +70,4 @@ jobs:
 
     - name: Comment PR
       if: ${{ steps.create_pr.outputs.pull-request-number != '' }}
-      uses: thollander/actions-comment-pull-request@v3
-      with:
-        github-token: ${{ env.GH_TOKEN }}
-        pr-number: ${{ steps.create_pr.outputs.pull-request-number }}
-        file-path: .dependency-diff.txt
+      run: gh pr comment "${{ steps.create_pr.outputs.pull-request-number }}" --body-file .dependency-diff.txt
