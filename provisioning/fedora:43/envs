@@ -1,1 +1,1 @@
-ARM64_FILTER_PACKAGES=glibc-devel.i686
+ARM64_FILTER_PACKAGES=glibc-devel.i686,libatomic.i686
