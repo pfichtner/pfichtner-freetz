@@ -165,9 +165,9 @@ writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:13"    "$OVERWRITE" '- Debian 13
 writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:12"    "$OVERWRITE" '- Debian 12'             "$DEBIAN_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:11"    "$OVERWRITE" '- Debian 11'             "$DEBIAN_PATTERN"
 
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:44"    "$OVERWRITE" '- Fedora 44'            "$FEDORA_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:43"    "$OVERWRITE" '- Fedora 42/43'          "$FEDORA_PATTERN"
-writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:42"    "$OVERWRITE" '- Fedora 42/43'          "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:44"    "$OVERWRITE" '- Fedora 42/43/44'       "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:43"    "$OVERWRITE" '- Fedora 42/43/44'       "$FEDORA_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:42"    "$OVERWRITE" '- Fedora 42/43/44'       "$FEDORA_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:41"    "$OVERWRITE" '- Fedora 41'             "$FEDORA_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:40"    "$OVERWRITE" '- Fedora 40'             "$FEDORA_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "fedora:39"    "$OVERWRITE" '- Fedora 37\/38\/39'     "$FEDORA_PATTERN"
