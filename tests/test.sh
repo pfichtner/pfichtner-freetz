@@ -149,3 +149,11 @@ teardown() {
   [ "$output" == $'1000' ]
 }
 
+@test "USE_UID_FROM owned by root falls back to non-root uid" {
+  uid=$(podman run --rm -i \
+      -v /:/workspace:ro \
+      -e USE_UID_FROM=/workspace \
+      docker.io/$IMAGE \
+      id -u)
+  [ "$uid" -ne 0 ]
+}

@@ -32,7 +32,13 @@ fi
 [ `id -u` -eq 0 ] || setToDefaults
 
 [ -z "$BUILD_USER" ] && BUILD_USER="$DEFAULT_BUILD_USER"
-[ -n "$USE_UID_FROM" ] && BUILD_USER_UID=`stat -c "%u" $USE_UID_FROM`
+if [ -n "$USE_UID_FROM" ]; then
+    BUILD_USER_UID=$(stat -c "%u" "$USE_UID_FROM")
+
+    # Podman user namespace mappings can make a bind mount appear
+    # owned by root inside the container. Do not mirror UID 0.
+    [ "$BUILD_USER_UID" -eq 0 ] && unset BUILD_USER_UID
+fi
 
 if [ `id -u` -eq 0 ]; then
 	# better read HOME/DHOME from /etc/default/useradd /etc/adduser.conf
