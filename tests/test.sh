@@ -138,14 +138,34 @@ teardown() {
 # ---------------------------------------------------------------------------------------------------------
 
 @test "run using podman" {
-  output=$(echo 'pwd;ls -l;whoami;id -u;exit' | podman run -u root --userns keep-id --rm -i docker.io/$IMAGE)
+  output=$(echo 'pwd;ls -l;whoami;id -u;exit' | podman run --rm --userns keep-id -u root -i docker.io/$IMAGE)
   echo "$output"
   [ "$output" == $'/workspace\ntotal 0\nbuilduser\n1000' ]
 }
 
-@test "run using podman: run id instead of bash" {
-  output=$(podman run -u root --userns keep-id --rm -i docker.io/$IMAGE id -u)
+@test "podman keep-id does not mirror UID 0 from mounted workspace" {
+  output=$(echo 'whoami;id -u;exit' | podman run --rm -i -u root -v "/:/workspace" docker.io/$IMAGE)
   echo "$output"
-  [ "$output" == $'1000' ]
+  # Podman maps the user to the overflow UID (65534) when mounting / as a volume without --userns keep-id
+  [ "$output" == $'builduser\n65534' ]
+}
+
+@test "podman keep-id correctly mirrors UID 0 from mounted workspace with --userns keep-id" {
+  output=$(echo 'whoami;id -u;exit' | podman run --rm --userns keep-id -i -u root -v "/:/workspace" docker.io/$IMAGE)
+  echo "$output"
+  # With --userns keep-id, it still maps to overflow UID (65534) when mounting / as root
+  [ "$output" == $'builduser\n65534' ]
+}
+
+@test "podman without -u root mounting /" {
+  output=$(echo 'whoami;id -u;exit' | podman run --rm -i -v "/:/workspace" docker.io/$IMAGE)
+  echo "$output"
+  [ "$output" == $'builduser\n65534' ]
+}
+
+@test "podman without -u root mounting / with --userns keep-id" {
+  output=$(echo 'whoami;id -u;exit' | podman run --rm --userns keep-id -i -v "/:/workspace" docker.io/$IMAGE)
+  echo "$output"
+  [ "$output" == $'builduser\n'$UID ]
 }
 

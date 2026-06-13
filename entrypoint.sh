@@ -34,6 +34,11 @@ fi
 [ -z "$BUILD_USER" ] && BUILD_USER="$DEFAULT_BUILD_USER"
 [ -n "$USE_UID_FROM" ] && BUILD_USER_UID=`stat -c "%u" $USE_UID_FROM`
 
+# Ensure it's not root. If it's empty or 0, default to the default build user's UID.
+if [ -z "$BUILD_USER_UID" ] || [ "$BUILD_USER_UID" -eq 0 ]; then
+	BUILD_USER_UID=$(getent passwd "$DEFAULT_BUILD_USER" | cut -d: -f3)
+fi
+
 if [ `id -u` -eq 0 ]; then
 	# better read HOME/DHOME from /etc/default/useradd /etc/adduser.conf
 	[ -z "$BUILD_USER_HOME" ] && BUILD_USER_HOME=/home/$BUILD_USER
