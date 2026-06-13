@@ -34,7 +34,7 @@ fi
 [ -z "$BUILD_USER" ] && BUILD_USER="$DEFAULT_BUILD_USER"
 [ -n "$USE_UID_FROM" ] && BUILD_USER_UID=`stat -c "%u" $USE_UID_FROM`
 
-if [ `id -u` -eq 0 ]; then
+if [ `id -u` -eq 0 ] && [ "$BUILD_USER_UID" != 0 ]; then  # UID=0, but mapped to calling user in UserNS Podman
 	# better read HOME/DHOME from /etc/default/useradd /etc/adduser.conf
 	[ -z "$BUILD_USER_HOME" ] && BUILD_USER_HOME=/home/$BUILD_USER
 
@@ -66,7 +66,7 @@ if [ "${AUTOINSTALL_PREREQUISITES}" != 'n' ]; then
 fi
 
 DEFAULT_SHELL=`getent passwd $BUILD_USER | cut -f 7 -d':'`
-if [ `id -u` -eq 0 ]; then
+if [ `id -u` -eq 0 ] && [ "$BUILD_USER_UID" != 0 ]; then  # UID=0, but mapped to calling user in UserNS Podman
 	[ "$#" -gt 0 ] && exec gosu "$BUILD_USER" "$@" || exec gosu "$BUILD_USER" "$DEFAULT_SHELL"
 else
 	[ "$#" -gt 0 ] && exec "$@" || exec "$DEFAULT_SHELL"
