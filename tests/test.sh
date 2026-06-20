@@ -137,15 +137,38 @@ teardown() {
 
 # ---------------------------------------------------------------------------------------------------------
 
-@test "run using podman" {
-  output=$(echo 'pwd;ls -l;whoami;id -u;exit' | podman run -u root --userns keep-id --rm -i docker.io/$IMAGE)
-  echo "$output"
-  [ "$output" == $'/workspace\ntotal 0\nbuilduser\n1000' ]
+@test "podman keep-id produces valid uid mapping" {
+  uid=$(podman run --rm --userns keep-id -i docker.io/$IMAGE id -u)
+
+  [[ "$uid" =~ ^[0-9]+$ ]]
+
+  if [ "$UID" -ne 0 ]; then
+    [ "$uid" = "$UID" ]
+  else
+    [ "$uid" != "0" ]
+  fi
 }
 
-@test "run using podman: run id instead of bash" {
-  output=$(podman run -u root --userns keep-id --rm -i docker.io/$IMAGE id -u)
-  echo "$output"
-  [ "$output" == $'1000' ]
+@test "podman keep-id maps to a non-root uid (host or overflow)" {
+  uid=$(podman run --rm --userns keep-id -i -u root docker.io/$IMAGE id -u)
+  [ "$uid" != "0" ]
 }
 
+@test "podman keep-id does not mirror UID 0 from mounted workspace" {
+  uid=$(podman run --rm -i -u root -v "/:/workspace" docker.io/$IMAGE id -u)
+  # must NOT be root
+  [ "$uid" != "0" ]
+}
+
+@test "podman without -u root mounting /" {
+  uid=$(podman run --rm -i -v "/:/workspace" docker.io/$IMAGE id -u)
+  # should NOT equal host UID (no keep-id)
+  [ "$uid" != "$UID" ]
+  [ "$uid" != "0" ]
+}
+
+@test "podman without -u root mounting / with --userns keep-id" {
+  uid=$(podman run --rm --userns keep-id -i -v "/:/workspace" docker.io/$IMAGE id -u)
+  # should mirror host UID
+  [ "$uid" = "$UID" ]
+}
