@@ -29,7 +29,7 @@ jobs:
     outputs:
       os: ${{ steps.matrix.outputs.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - id: matrix
         run: |
@@ -55,12 +55,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{ env.MAIN_REPO }}
           path: ${{ env.MAIN_CLONE_PATH }}
       - name: Checkout Freetz-NG
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{ env.FREETZ_REPO }}
           path: ${{ env.FREETZ_CLONE_PATH }}
