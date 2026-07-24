@@ -2,7 +2,7 @@ name: Matrix Docker Build & Push
 
 on:
   schedule:
-    - cron: "32 14 * * 0"
+    - cron: "32 14 1 * *"
   workflow_dispatch:
 
 jobs:
