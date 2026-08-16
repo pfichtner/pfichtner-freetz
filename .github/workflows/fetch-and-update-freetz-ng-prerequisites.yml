@@ -16,13 +16,13 @@ jobs:
       PREREQS_PATH: docs/prerequisites/README.md
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         persist-credentials: false
 
     - name: Cache curl results
       id: cache-curl-results
-      uses: actions/cache@v6
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       env:
         cache-name: cache-curl-results
       with:
@@ -53,7 +53,7 @@ jobs:
 
     - name: Create Pull Request
       if: ${{ steps.check_open_pr.outputs.NO_OPEN_PR == 'true' }}
-      uses: peter-evans/create-pull-request@v8
+      uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
       id: create_pr
       with:
         # token is necessary so that the PR can be commented by another GHA workflow
