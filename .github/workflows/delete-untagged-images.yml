@@ -14,13 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Delete untagged images
-        uses: Chizkiyahu/delete-untagged-ghcr-action@707cf4f1445ec3e3f5c7bfc83a023fb868cd1174 # v6.1.1
+      - name: Delete untagged images older than 7 days
+        uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         with:
-          token: ${{ github.token }}
-          repository_owner: ${{ github.repository_owner }}
-          repository: ${{ github.repository }}
-          package_name: ${{ github.event.repository.name }}
-          untagged_only: true
-          owner_type: user # or org
-          except_untagged_multiplatform: true
+          delete-untagged: true
+          older-than: 7 days
