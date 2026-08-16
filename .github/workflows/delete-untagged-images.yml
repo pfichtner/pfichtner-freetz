@@ -14,40 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Delete untagged images older than 7 days
-        env:
-          OWNER: ${{ github.repository_owner }}
-          PACKAGE: ${{ github.event.repository.name }}
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          CUTOFF=$(date -d "7 days ago" +%s)
-
-          versions=$(gh api \
-            /users/$OWNER/packages/container/$PACKAGE/versions \
-            --paginate)
-
-          tagged_digests=$(echo "$versions" \
-            | jq -r '.[] | select(.metadata.container.tags != null and (.metadata.container.tags | length) > 0) | .metadata.container.digest // empty' \
-            | sort -u)
-
-          echo "$versions" | jq -c '.[]' | while read -r version; do
-            tags=$(echo "$version" | jq -c '.metadata.container.tags // []')
-            digest=$(echo "$version" | jq -r '.metadata.container.digest // empty')
-            updated=$(echo "$version" | jq -r '.updated_at')
-            updated_ts=$(date -d "$updated" +%s)
-            id=$(echo "$version" | jq -r '.id')
-
-            if [ "$tags" = "[]" ]; then
-              if [ -n "$digest" ] && printf '%s\n' "$tagged_digests" | grep -Fxq "$digest"; then
-                echo "Skipping untagged version $id because its digest $digest is still referenced by a tagged image"
-                continue
-              fi
-
-              if [ "$updated_ts" -lt "$CUTOFF" ]; then
-                echo "Deleting untagged version $id"
-                gh api \
-                  --method DELETE \
-                  /users/$OWNER/packages/container/$PACKAGE/versions/$id
-              fi
-            fi
-          done
+      - name: Delete untagged images
+        uses: Chizkiyahu/delete-untagged-ghcr-action@707cf4f1445ec3e3f5c7bfc83a023fb868cd1174 # v6.1.1
+        with:
+          token: ${{ github.token }}
+          repository_owner: ${{ github.repository_owner }}
+          repository: ${{ github.repository }}
+          package_name: ${{ github.event.repository.name }}
+          untagged_only: true
+          owner_type: user # or org
+          except_untagged_multiplatform: true
