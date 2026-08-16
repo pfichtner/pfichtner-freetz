@@ -30,6 +30,7 @@ jobs:
           - debian:11
           - debian:12
           - debian:13
+          - debian:14
           - fedora:41
           - fedora:42
           - fedora:43
