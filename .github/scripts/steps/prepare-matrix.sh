@@ -10,7 +10,7 @@ else
 fedora-43-latest
 fedora-44-latest
 debian-13-latest
-debian-14-latest
+debian-forky-latest
 ubuntu-22.04-latest
 ubuntu-24.04-latest
 ubuntu-26.04-latest

@@ -29,7 +29,7 @@ jobs:
         base:
           - debian:12
           - debian:13
-          - debian:14
+          - debian:forky
           - fedora:41
           - fedora:42
           - fedora:43
