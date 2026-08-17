@@ -26,18 +26,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        base:
-          - debian:bookworm
-          - debian:trixie
-          - debian:forky
-          - fedora:41
-          - fedora:42
-          - fedora:43
-          - fedora:44
-          - ubuntu:20.04
-          - ubuntu:22.04
-          - ubuntu:24.04
-          - ubuntu:26.04
+        include:
+          - base: debian:bookworm
+            vers: 12
+          - base: debian:trixie
+            vers: 13
+          - base: debian:forky
+            vers: 14
+          - base: fedora:41
+          - base: fedora:42
+          - base: fedora:43
+          - base: fedora:44
+          - base: ubuntu:20.04
+          - base: ubuntu:22.04
+          - base: ubuntu:24.04
+          - base: ubuntu:26.04
 
     steps:
       - name: Check out the repo
@@ -51,7 +54,8 @@ jobs:
 
           # Split into distro + version
           DISTRO=$(echo "$IMAGE" | cut -d: -f1)
-          VER=$(echo "$IMAGE" | cut -d: -f2)
+          VER="${{ matrix.vers }}"
+          [ -z $VER ] && VER=$(echo "$IMAGE" | cut -d: -f2)
           VERSION="v${{ env.VERSION }}"
 
           TAG="${DISTRO}-${VER}-${VERSION}"
