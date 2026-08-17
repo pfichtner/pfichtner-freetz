@@ -27,8 +27,8 @@ jobs:
       fail-fast: false
       matrix:
         base:
-          - debian:12
-          - debian:13
+          - debian:bookworm
+          - debian:trixie
           - debian:forky
           - fedora:41
           - fedora:42
