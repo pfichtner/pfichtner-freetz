@@ -9,8 +9,9 @@ else
   OSLIST="
 fedora-43-latest
 fedora-44-latest
+debian-12-latest
 debian-13-latest
-debian-forky-latest
+debian-14-latest
 ubuntu-22.04-latest
 ubuntu-24.04-latest
 ubuntu-26.04-latest

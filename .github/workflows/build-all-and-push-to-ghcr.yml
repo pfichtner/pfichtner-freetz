@@ -26,18 +26,36 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        base:
-          - debian:12
-          - debian:13
-          - debian:forky
-          - fedora:41
-          - fedora:42
-          - fedora:43
-          - fedora:44
-          - ubuntu:20.04
-          - ubuntu:22.04
-          - ubuntu:24.04
-          - ubuntu:26.04
+        include:
+          - base: debian:12
+            codename: bookworm
+            tag: "12"
+          - base: debian:13
+            codename: trixie
+            tag: "13"
+          - base: debian:forky
+            codename: forky
+            tag: "14"
+          - base: fedora:41
+            tag: "41"
+          - base: fedora:42
+            tag: "42"
+          - base: fedora:43
+            tag: "43"
+          - base: fedora:44
+            tag: "44"
+          - base: ubuntu:20.04
+            codename: focal
+            tag: "20.04"
+          - base: ubuntu:22.04
+            codename: jammy
+            tag: "22.04"
+          - base: ubuntu:24.04
+            codename: noble
+            tag: "24.04"
+          - base: ubuntu:26.04
+            codename: resolute
+            tag: "26.04"
 
     steps:
       - name: Check out the repo
@@ -49,17 +67,29 @@ jobs:
         run: |
           IMAGE="${{ matrix.base }}"
 
-          # Split into distro + version
+          # Split into distro
           DISTRO=$(echo "$IMAGE" | cut -d: -f1)
-          VER=$(echo "$IMAGE" | cut -d: -f2)
           VERSION="v${{ env.VERSION }}"
+          TAG="${{ matrix.tag }}"
+          CODENAME="${{ matrix.codename }}"
 
-          TAG="${DISTRO}-${VER}-${VERSION}"
+          RELEASE="${DISTRO}-${TAG}-${VERSION}"
 
-          echo "Generated tag: $TAG"
+          # Build tags string
+          TAGS="${RELEASE}"$'\n'"${DISTRO}-${TAG}-latest"
+          if [ -n "$CODENAME" ]; then
+            TAGS="${TAGS}"$'\n'"${DISTRO}-${CODENAME}-${VERSION}"$'\n'"${DISTRO}-${CODENAME}-latest"
+          fi
+
+          echo "Generated tag: $RELEASE"
           echo "DISTRO=$DISTRO" >> $GITHUB_OUTPUT
-          echo "VER=$VER" >> $GITHUB_OUTPUT
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          {
+            echo "TAGS<<EOF"
+            echo "$TAGS"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
@@ -79,9 +109,7 @@ jobs:
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.REPO }}
-          tags: |
-            ${{ steps.tag.outputs.DISTRO }}-${{ steps.tag.outputs.VER }}-${{ steps.tag.outputs.VERSION }}
-            ${{ steps.tag.outputs.DISTRO }}-${{ steps.tag.outputs.VER }}-latest
+          tags: ${{ steps.tag.outputs.TAGS }}
 
       - name: Build & Push
         id: push
