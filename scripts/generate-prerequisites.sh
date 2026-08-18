@@ -161,7 +161,7 @@ writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:18.04" "$OVERWRITE" '- Ubuntu 18
 writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:16.04" "$OVERWRITE" '- Ubuntu 15\/16'         "$UBUNTU_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "ubuntu:14.04" "$OVERWRITE" '- Ubuntu 14'             "$UBUNTU_PATTERN"
 
-#writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:forky" "$OVERWRITE" '- Debian 14'             "$DEBIAN_PATTERN"
+writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:forky" "$OVERWRITE" '- Debian 14'             "$DEBIAN_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:13"    "$OVERWRITE" '- Debian 13'             "$DEBIAN_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:12"    "$OVERWRITE" '- Debian 12'             "$DEBIAN_PATTERN"
 writeFiles "$CACHE/$FILENAME" "$TARGET" "debian:11"    "$OVERWRITE" '- Debian 11'             "$DEBIAN_PATTERN"
