@@ -14,5 +14,5 @@ expectToBeAbsent() {
 # gcc.x86_64 requires "libatomic" without architecture qualifier.
 # DNF may resolve this to the i686 variant, which installs to /usr/lib/ instead of /usr/lib64/.
 # Explicitly install the x86_64 variant so the linker finds libatomic.so.1.2.0.
-dnf install -y libatomic.x86_64
+[ "$(uname -m)" = "x86_64" ] && dnf install -y libatomic.x86_64
 
