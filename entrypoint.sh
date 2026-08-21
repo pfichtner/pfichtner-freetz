@@ -25,7 +25,7 @@ autoInstallPrerequisites() {
 if [ -z "$BUILD_USER" ] && [ -z "$BUILD_USER_HOME" ] && [ -z "$BUILD_USER_UID" ]; then
 	setToDefaults
 	[ -z "$USE_UID_FROM" ] && USE_UID_FROM="$BUILD_USER_HOME"
-	[ "$PWD" == "/" ] && cd "$BUILD_USER_HOME"
+	[ "$PWD" != "/" ] || cd "$BUILD_USER_HOME"
 fi
 
 # ignore PARAMS BUILD_USER and BUILD_USER_HOME (use defaults) if not root
