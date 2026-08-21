@@ -39,9 +39,13 @@ jobs:
         with:
           context: .
           push: false  # Build the image but do not push yet
+          load: true   # Load into local Docker daemon for testing
           build-args: ${{ env.BUILD_ARGS }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Load image into podman for tests
+        run: docker save ${{ steps.meta.outputs.tags }} | podman load
 
       - name: Setup Bats and bats libs
         id: setup-bats
