@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-IMAGE=pfichtner/freetz
+IMAGE=pfichtner/freetz:test
 
 
 # Global variable to store the path of the temporary directory
