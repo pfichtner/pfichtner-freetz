@@ -171,7 +171,7 @@ teardown() {
 # Verifies that podman's keep-id userns produces a valid numeric UID
 # and matches the host user's UID when running as non-root.
 @test "podman keep-id produces valid uid mapping" {
-  uid=$(podman run --rm --userns keep-id -i $PODMAN_IMAGE id -u)
+  uid=$(podman run --rm --userns keep-id -i -v "/:/workspace" $PODMAN_IMAGE id -u)
 
   [[ "$uid" =~ ^[0-9]+$ ]]
 
