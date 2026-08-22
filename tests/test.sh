@@ -139,7 +139,7 @@ teardown() {
 # ---------------------------------------------------------------------------------------------------------
 
 @test "podman keep-id produces valid uid mapping" {
-  uid=$(podman run --rm --userns keep-id -i $PODMAN_IMAGE id -u)
+  uid=$(podman run --rm --userns keep-id -e BUILD_USER_UID=$(id -u) -i $PODMAN_IMAGE id -u)
 
   [[ "$uid" =~ ^[0-9]+$ ]]
 
