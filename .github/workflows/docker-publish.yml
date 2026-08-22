@@ -54,11 +54,17 @@ jobs:
         id: setup-bats
         uses: bats-core/bats-action@77d6fb60505b4d0d1d73e48bd035b55074bbfb43 # 4.0.0
 
-      - name: Run Tests
+      - name: Run Entrypoint Tests
         shell: bash
         env:
          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
-        run: bats tests/test.sh
+        run: bats tests/test-entrypoint.sh
+
+      - name: Run Image Tests
+        shell: bash
+        env:
+         BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+        run: bats tests/test-image.sh
 
       - name: Push Docker image to Docker Hub
         id: push
