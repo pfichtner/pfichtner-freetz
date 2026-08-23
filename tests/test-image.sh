@@ -3,8 +3,9 @@
 # Overridable so CI can pin the exact image that was just built (see docker-publish.yml).
 # Defaults to the published image for local runs.
 IMAGE="${IMAGE:-pfichtner/freetz}"
-PODMAN_IMAGE="localhost/$IMAGE"
 
+PODMAN_IMAGE="docker.io/$IMAGE"
+podman image exists "localhost/$IMAGE" 2>/dev/null && PODMAN_IMAGE="localhost/$IMAGE"
 
 # Verifies that podman's keep-id userns produces a valid numeric UID
 # and matches the host user's UID when running as non-root.
