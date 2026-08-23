@@ -11,6 +11,9 @@ jobs:
     env:
       BUILD_ARGS: |
         PARENT=ubuntu:24.04
+      # Immutable per-run tag: tests must run exactly the image built in this run,
+      # never a stale local image or one pulled from the registry.
+      TEST_IMAGE: pfichtner/freetz:test-${{ github.sha }}
 
     steps:
       - name: Check out the repo
@@ -41,12 +44,14 @@ jobs:
           push: false  # Build the image but do not push yet
           load: true   # Load into local Docker daemon for testing
           build-args: ${{ env.BUILD_ARGS }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ env.TEST_IMAGE }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Load image into podman for tests
         run: |
-          docker save pfichtner/freetz -o /tmp/image.tar
+          docker save "$TEST_IMAGE" -o /tmp/image.tar
           podman load -i /tmp/image.tar
           rm /tmp/image.tar
 
@@ -58,12 +63,14 @@ jobs:
         shell: bash
         env:
          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+         IMAGE: ${{ env.TEST_IMAGE }}
         run: bats tests/test-entrypoint.sh
 
       - name: Run Image Tests
         shell: bash
         env:
          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+         IMAGE: ${{ env.TEST_IMAGE }}
         run: bats tests/test-image.sh
 
       - name: Push Docker image to Docker Hub
