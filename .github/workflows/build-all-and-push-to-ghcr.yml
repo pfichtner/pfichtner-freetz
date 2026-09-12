@@ -6,124 +6,97 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
+  build-prepare:
+    runs-on: ubuntu-slim
     env:
       REGISTRY: ghcr.io
       REPO: ${{ github.repository_owner }}/${{ github.event.repository.name }}
       VERSION: "0.0.1"
       HTTP_PROXY: ${{ secrets.HTTP_PROXY || '' }}
       HTTPS_PROXY: ${{ secrets.HTTPS_PROXY || '' }}
-      BUILD_ARGS: |
-        PARENT=${{ matrix.base }}
-        ${HTTP_PROXY:+http_proxy=${HTTP_PROXY}}
-        ${HTTPS_PROXY:+https_proxy=${HTTPS_PROXY}}
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      image: ${{ steps.set-outputs.outputs.image }}
+      registry: ${{ steps.set-outputs.outputs.registry }}
+      version: ${{ steps.set-outputs.outputs.version }}
+      http_proxy: ${{ steps.set-outputs.outputs.http_proxy }}
+      https_proxy: ${{ steps.set-outputs.outputs.https_proxy }}
+    steps:
+      - name: Set matrix
+        id: set-matrix
+        run: |
+          baseline=()
 
+          # Add your base images and their corresponding codenames and tags here
+          baseline+=("debian:12;debian;bookworm;12")
+          baseline+=("debian:13;debian;trixie;13")
+          baseline+=("debian:forky;debian;forky;14")
+          baseline+=("fedora:41;fedora;;41")
+          baseline+=("fedora:42;fedora;;42")
+          baseline+=("fedora:43;fedora;;43")
+          baseline+=("fedora:44;fedora;;44")
+          baseline+=("ubuntu:20.04;ubuntu;focal;20.04")
+          baseline+=("ubuntu:22.04;ubuntu;jammy;22.04")
+          baseline+=("ubuntu:24.04;ubuntu;noble;24.04")
+          baseline+=("ubuntu:26.04;ubuntu;resolute;26.04")
+
+          json_entries=""
+          for entry in "${baseline[@]}"; do
+            IFS=';' read -r base distro codename tag <<< "$entry"
+            if [ -n "$json_entries" ]; then
+              json_entries+=","
+            fi
+            json_entries+="{\"base\":\"$base\",\"distro\":\"$distro\",\"codename\":\"$codename\",\"tag\":\"$tag\"}"
+          done
+
+          MATRIX="{\"include\":[${json_entries}]}"
+          echo "Matrix generated:"
+          echo "$MATRIX"
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+
+      - name: set other outputs
+        id: set-outputs
+        run: |
+          echo "image=$(echo '${{ env.REGISTRY }}/${{ env.REPO }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+          echo "registry=${{ env.REGISTRY }}" >> "$GITHUB_OUTPUT"
+          echo "version=${{ env.VERSION }}" >> "$GITHUB_OUTPUT"
+          echo "http_proxy=${{ env.HTTP_PROXY }}" >> "$GITHUB_OUTPUT"
+          echo "https_proxy=${{ env.HTTPS_PROXY }}" >> "$GITHUB_OUTPUT"
+
+  build:
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - base: debian:12
-            codename: bookworm
-            tag: "12"
-          - base: debian:13
-            codename: trixie
-            tag: "13"
-          - base: debian:forky
-            codename: forky
-            tag: "14"
-          - base: fedora:41
-            tag: "41"
-          - base: fedora:42
-            tag: "42"
-          - base: fedora:43
-            tag: "43"
-          - base: fedora:44
-            tag: "44"
-          - base: ubuntu:20.04
-            codename: focal
-            tag: "20.04"
-          - base: ubuntu:22.04
-            codename: jammy
-            tag: "22.04"
-          - base: ubuntu:24.04
-            codename: noble
-            tag: "24.04"
-          - base: ubuntu:26.04
-            codename: resolute
-            tag: "26.04"
-
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Generate tag name
-        id: tag
-        shell: bash
-        run: |
-          IMAGE="${{ matrix.base }}"
-
-          # Split into distro
-          DISTRO=$(echo "$IMAGE" | cut -d: -f1)
-          VERSION="v${{ env.VERSION }}"
-          TAG="${{ matrix.tag }}"
-          CODENAME="${{ matrix.codename }}"
-
-          RELEASE="${DISTRO}-${TAG}-${VERSION}"
-
-          # Build tags string
-          TAGS="${RELEASE}"$'\n'"${DISTRO}-${TAG}-latest"
-          if [ -n "$CODENAME" ]; then
-            TAGS="${TAGS}"$'\n'"${DISTRO}-${CODENAME}-${VERSION}"$'\n'"${DISTRO}-${CODENAME}-latest"
-          fi
-
-          echo "Generated tag: $RELEASE"
-          echo "DISTRO=$DISTRO" >> $GITHUB_OUTPUT
-          echo "TAG=$TAG" >> $GITHUB_OUTPUT
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          {
-            echo "TAGS<<EOF"
-            echo "$TAGS"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
-      - name: Setup QEMU
-        uses: docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a # v4.3.0
-
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-
-      - name: Login to GHCR
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-        with:
-          registry: ${{ env.REGISTRY }}
+      matrix: ${{ fromJson(needs.build-prepare.outputs.matrix) }}
+    uses: docker/github-builder/.github/workflows/build.yml@58cb9f5b71b1836d6f690c1e95effdeb9b98cb8a # v1.17.0
+    name: build - ${{ matrix.base }}
+    needs:
+      - build-prepare
+    permissions:
+      contents: read
+      packages: write
+    with:
+      setup-qemu: false
+      cache: false
+      fail-fast: false
+      context: .
+      output: image
+      build-args: |
+        PARENT=${{ matrix.base }}
+        HTTP_PROXY=${{ needs.build-prepare.outputs.http_proxy || '' }}
+        HTTPS_PROXY=${{ needs.build-prepare.outputs.https_proxy || '' }}
+      platforms: linux/amd64,linux/arm64
+      push: true
+      set-meta-labels: true
+      meta-images: |
+        ${{ needs.build-prepare.outputs.image }}
+      meta-tags: |
+        ${{ matrix.codename && format('{0}-{1}-v{2}', matrix.distro, matrix.codename, needs.build-prepare.outputs.version) }}
+        ${{ matrix.codename && format('{0}-{1}-latest', matrix.distro, matrix.codename) }}
+        ${{ matrix.tag && format('{0}-{1}-v{2}', matrix.distro, matrix.tag, needs.build-prepare.outputs.version) }}
+        ${{ matrix.tag && format('{0}-{1}-latest', matrix.distro, matrix.tag) }}
+      sign: false
+    secrets:
+      registry-auths: |
+        - registry: ${{ needs.build-prepare.outputs.registry }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.REPO }}
-          tags: ${{ steps.tag.outputs.TAGS }}
-
-      - name: Build & Push
-        id: push
-        continue-on-error: true
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
-        with: &build_args
-          context: .
-          push: true
-          platforms: linux/amd64,linux/arm64
-          build-args: ${{ env.BUILD_ARGS }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Retry Build & Push
-        if: ${{ steps.push.outcome == 'failure' }}
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
-        with: *build_args
