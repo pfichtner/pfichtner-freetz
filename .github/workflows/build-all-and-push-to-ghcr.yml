@@ -15,45 +15,12 @@ jobs:
       HTTP_PROXY: ${{ secrets.HTTP_PROXY || '' }}
       HTTPS_PROXY: ${{ secrets.HTTPS_PROXY || '' }}
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
       image: ${{ steps.set-outputs.outputs.image }}
       registry: ${{ steps.set-outputs.outputs.registry }}
       version: ${{ steps.set-outputs.outputs.version }}
       http_proxy: ${{ steps.set-outputs.outputs.http_proxy }}
       https_proxy: ${{ steps.set-outputs.outputs.https_proxy }}
     steps:
-      - name: Set matrix
-        id: set-matrix
-        run: |
-          baseline=()
-
-          # Add your base images and their corresponding codenames and tags here
-          baseline+=("debian:12;debian;bookworm;12")
-          baseline+=("debian:13;debian;trixie;13")
-          baseline+=("debian:forky;debian;forky;14")
-          baseline+=("fedora:41;fedora;;41")
-          baseline+=("fedora:42;fedora;;42")
-          baseline+=("fedora:43;fedora;;43")
-          baseline+=("fedora:44;fedora;;44")
-          baseline+=("ubuntu:20.04;ubuntu;focal;20.04")
-          baseline+=("ubuntu:22.04;ubuntu;jammy;22.04")
-          baseline+=("ubuntu:24.04;ubuntu;noble;24.04")
-          baseline+=("ubuntu:26.04;ubuntu;resolute;26.04")
-
-          json_entries=""
-          for entry in "${baseline[@]}"; do
-            IFS=';' read -r base distro codename tag <<< "$entry"
-            if [ -n "$json_entries" ]; then
-              json_entries+=","
-            fi
-            json_entries+="{\"base\":\"$base\",\"distro\":\"$distro\",\"codename\":\"$codename\",\"tag\":\"$tag\"}"
-          done
-
-          MATRIX="{\"include\":[${json_entries}]}"
-          echo "Matrix generated:"
-          echo "$MATRIX"
-          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
-
       - name: set other outputs
         id: set-outputs
         run: |
@@ -66,7 +33,52 @@ jobs:
   build:
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.build-prepare.outputs.matrix) }}
+      matrix:
+        include:
+          - base: debian:12
+            distro: debian
+            codename: bookworm
+            tag: "12"
+          - base: debian:13
+            distro: debian
+            codename: trixie
+            tag: "13"
+          - base: debian:forky
+            distro: debian
+            codename: forky
+            tag: "14"
+          - base: fedora:41
+            distro: fedora
+            codename: ""
+            tag: "41"
+          - base: fedora:42
+            distro: fedora
+            codename: ""
+            tag: "42"
+          - base: fedora:43
+            distro: fedora
+            codename: ""
+            tag: "43"
+          - base: fedora:44
+            distro: fedora
+            codename: ""
+            tag: "44"
+          - base: ubuntu:20.04
+            distro: ubuntu
+            codename: focal
+            tag: "20.04"
+          - base: ubuntu:22.04
+            distro: ubuntu
+            codename: jammy
+            tag: "22.04"
+          - base: ubuntu:24.04
+            distro: ubuntu
+            codename: noble
+            tag: "24.04"
+          - base: ubuntu:26.04
+            distro: ubuntu
+            codename: resolute
+            tag: "26.04"
     uses: docker/github-builder/.github/workflows/build.yml@58cb9f5b71b1836d6f690c1e95effdeb9b98cb8a # v1.17.0
     name: build - ${{ matrix.base }}
     needs:
