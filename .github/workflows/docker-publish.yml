@@ -38,7 +38,7 @@ jobs:
           images: pfichtner/freetz
 
       - name: Build Docker image
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           push: false  # Build the image but do not push yet
@@ -76,7 +76,7 @@ jobs:
       - name: Push Docker image to Docker Hub
         id: push
         if: success()  # Ensure this step runs only if the tests pass
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with: &build_args
           context: .
           push: true
@@ -87,5 +87,5 @@ jobs:
 
       - name: Retry Push Docker image to Docker Hub
         if: ${{ steps.push.outcome == 'failure' }}
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with: *build_args
