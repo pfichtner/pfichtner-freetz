@@ -118,15 +118,9 @@ If you encounter a problem when unpacking the image this could be caused by a pr
 - If you want to update an image that already was downloaded you can use `docker pull pfichtner/freetz` to check for a newer image and update it
 - When running on a Mac with ARM CPU (M1/M2/M3) you should pass ```--platform linux/amd64``` to use the x86 image
 
-## ⚠️ ARM64 limitations
+## ARM64 support
 
-Running this image on **ARM64 hosts** (e.g. Apple Silicon, ARM servers, GitHub ARM runners) is **only partially supported**.
-
-- ✅ **Works:** Devices using **kernel v4 and newer**
-- ❌ **Not supported:** Devices using **kernel v3 or older**
-
-### Background
-Some legacy host tools (e.g. `yf-akcarea-host`) require **32-bit x86 binaries** which cannot run natively on ARM64. 
+Running this image on **ARM64 hosts** (e.g. Apple Silicon, ARM servers, GitHub ARM runners) is supported since [Freetz-NG no longer requires 32-bit-only host tools](https://github.com/Freetz-NG/freetz-ng/commit/a609823d9cade184862e15fa4a18fb721ce0b8a9).
 
 ## Alternative to docker (podman)
 pfichtner/freetz also runs using podman (which has advantages due to being daemenless so you don't have to add users to any groups)
