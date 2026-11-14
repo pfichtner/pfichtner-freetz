@@ -4,20 +4,36 @@ on:
   workflow_dispatch:
     inputs:
       os:
+        description: "Operating system image to use for the build"
+        type: string
         required: true
         default: "_all"
       fos:
+        description: "Freetz-NG firmware source version"
+        type: string
         required: true
-        default: "08_2X"
+        default: "08_5X"
       box:
+        description: "Freetz-NG FRITZ!Box model to configure"
+        type: string
         required: true
-        default: "7530_W5"
+        default: "7690"
       tools:
+        description: "Build the toolchain and host tools locally (yes) or download them (no)"
+        type: choice
         required: true
         default: "yes"
+        options:
+          - "yes"
+          - "no"
       rootemu:
+        description: "Root emulation implementation"
+        type: choice
         required: true
-        default: "pseudo"
+        default: "fakeroot"
+        options:
+          - "fakeroot"
+          - "pseudo"
 
 concurrency:
   group: "${{ github.workflow }}"
@@ -37,6 +53,7 @@ jobs:
           echo "$OUTPUT" >> $GITHUB_OUTPUT
 
   build:
+    name: build (${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }} / ${{ matrix.docker }})
     needs: matrix
     strategy:
       fail-fast: false
@@ -81,6 +98,8 @@ jobs:
 
       - name: Build
         working-directory: ${{ env.FREETZ_CLONE_PATH }}
+        env:
+          FREETZ_DLTOKEN: ${{ secrets.FREETZ_DLTOKEN }}
         run: ../.github/scripts/ci.sh build
 
       - name: Result
