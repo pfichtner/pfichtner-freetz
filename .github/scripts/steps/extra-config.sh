@@ -4,14 +4,18 @@ set -euo pipefail
 TOOLS="$1"
 ROOTEMU="$2"
 
-[[ "$TOOLS" == "yes" ]] && echo '# FREETZ_DOWNLOAD_TOOLCHAIN is not set' >> .config
-[[ "$TOOLS" != "yes" ]] && echo 'FREETZ_DOWNLOAD_TOOLCHAIN=y' >> .config
+if [ "$TOOLS" = "yes" ]; then
+  echo '# FREETZ_DOWNLOAD_TOOLCHAIN is not set' >> .config
+  echo '# FREETZ_HOSTTOOLS_DOWNLOAD is not set' >> .config
+elif [ "$TOOLS" = "no" ]; then
+  echo 'FREETZ_DOWNLOAD_TOOLCHAIN=y' >> .config
+  echo 'FREETZ_HOSTTOOLS_DOWNLOAD=y' >> .config
+fi
 
-[[ "$TOOLS" == "yes" ]] && echo '# FREETZ_HOSTTOOLS_DOWNLOAD is not set' >> .config
-[[ "$TOOLS" != "yes" ]] && echo 'FREETZ_HOSTTOOLS_DOWNLOAD=y' >> .config
-
-[[ "$ROOTEMU" == "pseudo" ]] && echo '# FREETZ_ROOTEMU_FAKEROOT is not set' >> .config
-[[ "$ROOTEMU" != "pseudo" ]] && echo 'FREETZ_ROOTEMU_FAKEROOT=y' >> .config
-
-[[ "$ROOTEMU" == "fakeroot" ]] && echo '# FREETZ_ROOTEMU_PSEUDO is not set' >> .config
-[[ "$ROOTEMU" != "fakeroot" ]] && echo 'FREETZ_ROOTEMU_PSEUDO=y' >> .config
+if [ "$ROOTEMU" = "pseudo" ]; then
+  echo '# FREETZ_ROOTEMU_FAKEROOT is not set' >> .config
+  echo 'FREETZ_ROOTEMU_PSEUDO=y' >> .config
+elif [ "$ROOTEMU" = "fakeroot" ]; then
+  echo '# FREETZ_ROOTEMU_PSEUDO is not set' >> .config
+  echo 'FREETZ_ROOTEMU_FAKEROOT=y' >> .config
+fi
