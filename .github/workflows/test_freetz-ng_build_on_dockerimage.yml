@@ -29,8 +29,7 @@ on:
       rootemu:
         description: "Root emulation implementation"
         type: string
-        required: true
-        default: "fakeroot"
+        required: false
 
 concurrency:
   group: "${{ github.workflow }}"

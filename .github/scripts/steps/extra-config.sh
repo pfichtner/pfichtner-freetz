@@ -10,10 +10,12 @@ ROOTEMU="$2"
 [ "$TOOLS" = "yes" ] && echo '# FREETZ_HOSTTOOLS_DOWNLOAD is not set' >> .config
 [ "$TOOLS" = "no" ] && echo 'FREETZ_HOSTTOOLS_DOWNLOAD=y' >> .config
 
-[ "$ROOTEMU" != "fakeroot" ] && echo '# FREETZ_ROOTEMU_FAKEROOT is not set' >> .config
-[ "$ROOTEMU" = "fakeroot" ] && echo 'FREETZ_ROOTEMU_FAKEROOT=y' >> .config
+if [ -n "${ROOTEMU:-}" ]; then
+  [ "$ROOTEMU" != "fakeroot" ] && echo '# FREETZ_ROOTEMU_FAKEROOT is not set' >> .config
+  [ "$ROOTEMU" = "fakeroot" ] && echo 'FREETZ_ROOTEMU_FAKEROOT=y' >> .config
 
-[ "$ROOTEMU" != "pseudo" ] && echo '# FREETZ_ROOTEMU_PSEUDO is not set' >> .config
-[ "$ROOTEMU" = "pseudo" ] && echo 'FREETZ_ROOTEMU_PSEUDO=y' >> .config
+  [ "$ROOTEMU" != "pseudo" ] && echo '# FREETZ_ROOTEMU_PSEUDO is not set' >> .config
+  [ "$ROOTEMU" = "pseudo" ] && echo 'FREETZ_ROOTEMU_PSEUDO=y' >> .config
+fi
 
 :
