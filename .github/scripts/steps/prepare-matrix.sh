@@ -9,6 +9,7 @@ else
   OSLIST="
 fedora-43-latest
 fedora-44-latest
+fedora-45-latest
 debian-12-latest
 debian-13-latest
 debian-14-latest
