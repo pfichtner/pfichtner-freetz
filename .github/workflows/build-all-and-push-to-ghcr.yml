@@ -36,17 +36,12 @@ jobs:
           - base: debian:forky
             codename: forky
             tag: "14"
-          - base: fedora:41
-            tag: "41"
-          - base: fedora:42
-            tag: "42"
           - base: fedora:43
             tag: "43"
           - base: fedora:44
             tag: "44"
-          - base: ubuntu:20.04
-            codename: focal
-            tag: "20.04"
+          - base: fedora:45
+            tag: "45"
           - base: ubuntu:22.04
             codename: jammy
             tag: "22.04"
